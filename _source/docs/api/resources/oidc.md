@@ -64,8 +64,9 @@ The ID Token (`id_token`) consists of three period-separated, base64URL-encoded 
   		"locality": "Los Angeles", 
   		"region": "CA", 
   		"postal_code": "90210", 
-  		"country": "US" 
-  	},
+  		"country": "US",
+		"formatted": "123 Hollywood Blvd.\\nLos Angeles, CA\\n90210"
+},
   "phone_number":"+1 (425) 555-1212"
 }
 ~~~
@@ -129,7 +130,7 @@ Claims in the payload are independent of scope (always returned) or dependent on
 | updated_at     | profile    | Time the user's information was last updated, represented in Unix time (seconds).   | Integer    | 1311280970     |
 | email     |  email   | User's preferred e-mail address. The resource provider must <em>not</em> rely upon this value being unique.   | String    | "john.doe@example.com"     |
 | email_verified     |  email   | True if the user's e-mail address has been verified; otherwise false.   | boolean    | true     |
-| address     | address    | User's preferred postal address. The value of the address member is a JSON structure containing <em>street_address</em>, <em>locality</em>, <em>region</em>, <em>postal_code</em>, and <em>country</em>.   | JSON structure    | { "street_address": "123 Hollywood Blvd.", "locality": "Los Angeles", "region": "CA", "postal_code": "90210", "country": "US" }     |
+| address     | address    | User's preferred postal address. The value of the address member is a JSON structure containing <em>street_address</em>, <em>locality</em>, <em>region</em>, <em>postal_code</em>, <em>country</em>, and <em>formatted</em>.   | JSON structure    | { "street_address": "123 Hollywood Blvd.", "locality": "Los Angeles", "region": "CA", "postal_code": "90210", "country": "US", "formatted": "123 Hollywood Blvd.\\nLosAngeles, CA\\n90210" }     |
 | phone_number     |  phone   | User's preferred telephone number in E.164 format.   | String    | 	"+1 (425) 555-1212"     |
 
 >The client can also optionally request an Access Token along with the ID Token. In this case, in order to keep the size of the ID Token small, the ID Token body does not contain all the scope dependent claims. 
@@ -289,7 +290,7 @@ Returns a JSON document with information corresponding to the data requested in 
   "updated_at":1311280970,
   "email":"john.doe@example.com",
   "email_verified":true,
-  "address" : { "street_address": "123 Hollywood Blvd.", "locality": "Los Angeles", "region": "CA", "postal_code": "90210", "country": "US" },
+  "address" : { "street_address": "123 Hollywood Blvd.", "locality": "Los Angeles", "region": "CA", "postal_code": "90210", "country": "US", "formatted": "123 Hollywood Blvd.\\nLos Angeles, CA\\n90210" },
   "phone_number":"+1 (425) 555-1212"
 }
 ~~~
