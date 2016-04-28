@@ -212,6 +212,58 @@ Concatenate two strings | `user.firstName + user.lastName`
 Concatenate two strings with space | `user.firstName + " " + user.lastName`
 Ternary operator example:<br>If group code is 123, assign value of Sales, else assign Other | `user.groupCode == 123 ? 'Sales' : 'Other'`
 
+## Condition Expressions
+
+You can specify IF...THEN conditions with the Okta EL to use in some cases, such as group rules. The format for conditional expressions is 
+<p>IF [Condition] [Action]</p>
+
+
+<br>There are several rules for specifying the condition.
+
+* Expression must have valid syntax.
+* Expressions must evaluate to Boolean
+* Expressions cannot contain an assignment operator, such as =.
+* User attributes used in expressionscan only refer to available Okta user attributes.
+
+<br>The following functions are supported in conditions.
+
+* Any Okta Expression Language function
+* The AND operator
+* The OR operator
+* The ! operator to designate NOT
+* Standard arithmetic operators including <code>&lt;</code>, <code>&gt;</code>, <code>&lt;=</code>, and <code>&gt;=</code>.
+
+**Note:** Use the double equals sign, <code>==</code>, to check for equality.
+
+### Samples
+
+For these samples, assume that *user* has following attributes.
+
+Attribute | Type
+--------- | ----
+firstName | String
+lastName | String
+city | String
+salary | Int
+isContractor | Boolean
+
+The following samples are valid conditional expressions. The actions in these cases are group assignments.
+
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>IF String.stringContains(user.firstName, "dummy") dummyUsers</code>
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>IF user.city == "San Francisco" sfo</code>
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>IF user.salary > 1000000 expensiveEmployee</code>
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>IF !user.isContractor fullTimeEmployees</code>
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>IF user.salary > 1000000 AND !user.isContractor expensiveFullTimeEmployee</code>
+
+
+
+
+
 ## Popular Expressions
 
 Sample user data:
