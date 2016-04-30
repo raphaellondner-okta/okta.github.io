@@ -257,7 +257,7 @@ salary | Int
 isContractor | Boolean
 
 
-##### Samples Using Profile Mapping
+##### Samples Using Profile Mapping 
 
 The following samples are valid conditional expressions that apply to profile mapping. The attribute *courtesyTitle* is from another system being mapped to Okta. 
 
