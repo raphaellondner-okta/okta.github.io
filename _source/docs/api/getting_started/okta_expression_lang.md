@@ -223,10 +223,10 @@ The format for conditional expressions is
 
 <br>There are several rules for specifying the condition.
 
-* Expression must have valid syntax.
-* Conditions must evaluate to Boolean.
-* Conditions cannot contain an assignment operator, such as =.
-* User attributes used in expressions can only refer to available Okta user attributes.
+* Expressions must have valid syntax.
+* Expressions must evaluate to Boolean.
+* Expressions cannot contain an assignment operator, such as =.
+* User attributes used in expressions can contain only available User or AppUser attributes.
 
 <br>The following functions are supported in conditions.
 
@@ -262,19 +262,19 @@ isContractor | Boolean
 The following samples are valid conditional expressions that apply to profile mapping. The attribute *courtesyTitle* is from another system being mapped to Okta. 
 
 
-<p>If the middle initial is not blank, the full name is the first name, middle initial, a period, and the last name; otherwise it is the first name and the last name.<br><code>String.len(middleInitial) > 0 ? fullName=String.join(firstName, " ", middleInitial, ". ", lastName) : fullName=String.join(firstName, " ", lastName)</code></p>
+<p>If the middle initial is not blank, the full name is the first name, middle initial, a period, and the last name; otherwise it is the first name and the last name.<br><code>fullName = String.len(middleInitial) > 0 ? fullName=String.join(firstName, " ", middleInitial, ". ", lastName) : fullName=String.join(firstName, " ", lastName)</code></p>
 
-<p>If there is a courtesy title, use it for the honorific prefix.<br><code>!courtesyTitle=="" ? honorificPrefix=courtesyTitle</code></p>
+<p>If there is a courtesy title, use it for the honorific prefix.<br><code>honorificPrefix=!courtesyTitle=="" ? honorificPrefix=courtesyTitle : honorificPrefix=""</code></p>
 
-<p>If either email2 or email3 exists, make additionalEmail true; otherwise, make it false.<br><code>String.len(email2) > 0 OR String.len(email3) > 0 ? additionalEmail = True : additionalEmail=False</code></p>
+<p>If either email2 or email3 exists, make additionalEmail true; otherwise, make it false.<br><code>additionalEmail=String.len(email2) > 0 OR String.len(email3) > 0 ? additionalEmail= rue : additionalEmail=False</code></p>
 
 ##### Samples Using Group Rules
 
 The following samples are valid conditional expressions. The actions in these cases are group assignments.
 
 
-IF (Implicit) | Condition | Group Assignment if Condition is TRUE
-------------- | --------- | -------------------------------------
+IF (Implicit) | Condition | Assign to this Group Name if Condition is TRUE
+------------- | --------- | ----------------------------------------------
 IF | String.stringContains(user.firstName, "dummy") | dummyUsers
 IF | user.city=="San Francisco" | sfo
 IF | user.salary >=1000000 | expensiveEmployee
