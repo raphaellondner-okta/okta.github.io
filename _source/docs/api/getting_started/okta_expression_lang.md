@@ -218,7 +218,7 @@ You can specify IF...THEN...ELSE statements with the Okta EL. The primary use of
 
 
 The format for conditional expressions is 
-<p><code>[Condition] ? [Action if TRUE] : [Action if FALSE]</code></p>
+<p><code>[Condition] ? [Value if TRUE] : [Value if FALSE]</code></p>
 
 
 <br>There are several rules for specifying the condition.
