@@ -453,7 +453,7 @@ The ID token and the access token are signed by an RSA private key. Okta publish
 
 All applications must roll over keys for adequate security. Please note the following:
 
-* Okta automatically rotates keys used to sign token, for security purposes.
+* For security purposes, Okta automatically rotates keys used to sign the token.
 * The current key rotation schedule is at least twice a year. This schedule can change without notice.
 * In case of an emergency, Okta can rotate keys as needed.
 * Okta always publishes keys to the JWKS.
