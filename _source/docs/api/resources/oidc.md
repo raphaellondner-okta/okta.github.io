@@ -44,6 +44,7 @@ The ID Token (`id_token`) consists of three period-separated, base64URL-encoded 
   "amr": [
     "pwd"
   ],
+  "token_type": "id_token",
   "jti": "4eAWJOCMB3SX8XewDfVR",
   "auth_time": 1449624026,
   "at_hash": "cpqKfdQA5eH891Ff5oJr_Q",
@@ -97,6 +98,7 @@ Claims in the payload are independent of scope (always returned) or dependent on
 | Property     |  Description                                                                      | DataType     | Example                  |
 |--------------+---------+----------+----------------------------------------------------------------------------------+--------------|--------------------------|
 | ver     | The semantic version of the ID Token.   |  Integer   |  1    |
+| token_type | The type of the token. This will always be <em>id_token</em>.   | String    |  "id_token"  |
 | jti     | A unique identifier for this ID Token for debugging and revocation purposes.   | String    |  "Tlenfse93dgkaksginv"  |
 | iss     | The Issuer Identifier of the response.    | String    | "https://your-org.okta.com"     |
 | sub     | The subject. A unique identifier for the user.   | String    | 	"00uk1u7AsAk6dZL3z0g3"     |

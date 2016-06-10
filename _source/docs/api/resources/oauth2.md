@@ -129,7 +129,7 @@ The request is made with a <em>fragment</em> response mode.
 
 ~~~
 http://www.example.com/#
-<em>id_token</em>=eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIwMHVpZDRCeFh3Nkk2VFY0bTBnMyIsImVtYWlsIjoid2VibWFzdGVyQGNsb3VkaXR1ZG
+id_token=eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIwMHVpZDRCeFh3Nkk2VFY0bTBnMyIsImVtYWlsIjoid2VibWFzdGVyQGNsb3VkaXR1ZG
 UubmV0IiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInZlciI6MSwiaXNzIjoiaHR0cDovL3JhaW4ub2t0YTEuY29tOjE4MDIiLCJsb2dpbiI6ImFkbWluaXN
 0cmF0b3IxQGNsb3VkaXR1ZGUubmV0IiwiYXVkIjoidUFhdW5vZldrYURKeHVrQ0ZlQngiLCJpYXQiOjE0NDk2MjQwMjYsImV4cCI6MTQ0OTYyNzYyNiwi
 YW1yIjpbInB3ZCJdLCJqdGkiOiI0ZUFXSk9DTUIzU1g4WGV3RGZWUiIsImF1dGhfdGltZSI6MTQ0OTYyNDAyNiwiYXRfaGFzaCI6ImNwcUtmZFFBNWVIO
@@ -137,13 +137,13 @@ DkxRmY1b0pyX1EifQ.Btw6bUbZhRa89DsBb8KmL9rfhku--_mbNC2pgC8yu8obJnwO12nFBepui9Kzbp
 mF45Pn3u_6KKwxJnxcWxLvMuuisnvIs7NScKpOAab6ayZU0VL8W6XAijQmnYTtMWQfSuaaR8rYOaWHrffh3OypvDdrQuYacbkT0csxdrayXfBG3UF5-ZA
 lhfch1fhFT3yZFdWwzkSDc0BGygfiFyNhCezfyT454wbciSZgrA9ROeHkfPCaX7KCFO8GgQEkGRoQntFBNjluFhNLJIUkEFovEDlfuB4tv_M8BM75celd
 y3jkpOurg
-&<em>access_token</em>=eyJhbGciOiJSUzI1NiJ9.eyJ2ZXIiOjEsImlzcyI6Imh0dHA6Ly9yYWluLm9rdGExLmNvbToxODAyIiwiaWF0
+&access_token=eyJhbGciOiJSUzI1NiJ9.eyJ2ZXIiOjEsImlzcyI6Imh0dHA6Ly9yYWluLm9rdGExLmNvbToxODAyIiwiaWF0
 IjoxNDQ5NjI0MDI2LCJleHAiOjE0NDk2Mjc2MjYsImp0aSI6IlVmU0lURzZCVVNfdHA3N21BTjJxIiwic2NvcGVzIjpbIm9wZW5pZCIsImVtYWlsIl0sI
 mNsaWVudF9pZCI6InVBYXVub2ZXa2FESnh1a0NGZUJ4IiwidXNlcl9pZCI6IjAwdWlkNEJ4WHc2STZUVjRtMGczIn0.HaBu5oQxdVCIvea88HPgr2O5ev
 qZlCT4UXH4UKhJnZ5px-ArNRqwhxXWhHJisslswjPpMkx1IgrudQIjzGYbtLFjrrg2ueiU5-YfmKuJuD6O2yPWGTsV7X6i7ABT6P-t8PRz_RNbk-U1GXW
 IEkNnEWbPqYDAm_Ofh7iW0Y8WDA5ez1jbtMvd-oXMvJLctRiACrTMLJQ2e5HkbUFxgXQ_rFPNHJbNSUBDLqdi2rg_ND64DLRlXRY7hupNsvWGo0gF4WEU
 k8IZeaLjKw8UoIs-ETEwJlAMcvkhoVVOsN5dPAaEKvbyvPC1hUGXb4uuThlwdD3ECJrtwgKqLqcWonNtiw
-&<em>token_type</em>=Bearer<em>state</em>=waojafoawjgvbf
+&token_type=Bearer&state=waojafoawjgvbf
 ~~~
 
 #### Response Example (Error)
@@ -182,7 +182,7 @@ code_verifier      | The code verifier of [PKCE](#parameter-details). Okta uses 
 ##### Token Authentication Methods
 
 The client can authenticate by providing <em>client_id</em> and <em>client_secret</em> as a part of the URL-encoded form parameters (as described in table above),
-or it can use basic authentication by providing the <em>client_id</em> and <em>client_secret</em> as an Authroization header using the Basic auth scheme. 
+or it can use basic authentication by providing the <em>client_id</em> and <em>client_secret</em> as an Authorization header using the Basic auth scheme.
 Use one authentication mechanism with a given request. Using both returns an error.
 
 For authentication with Basic auth, an HTTP header with the following format must be provided with the POST request.
@@ -197,8 +197,8 @@ Based on the grant type, the returned JSON contains a different set of tokens.
 
 Input grant type   | Output token types                    |
 -------------------|---------------------------------------|
-code               | ID Token, Access Token, Refresh Token |
-refresh Token      | Access Token, Refresh Token           |
+authorization_code | ID Token, Access Token, Refresh Token |
+refresh_token      | Access Token, Refresh Token           |
 
 ##### Refresh Tokens for Web and Native Applications
 
@@ -276,7 +276,7 @@ client_secret   | The client secret generated as a part of client registration. 
 ##### Token Authentication Methods
 
 The client can authenticate by providing <em>client_id</em> and <em>client_secret</em> as a part of the URL-encoded form parameters (as described in table above),
-or it can use basic authentication by providing the <em>client_id</em> and <em>client_secret</em> as an Authroization header using the Basic auth scheme. 
+or it can use basic authentication by providing the <em>client_id</em> and <em>client_secret</em> as an Authorization header using the Basic auth scheme.
 Use one authentication mechanism with a given request. Using both returns an error.
 
 For authentication with Basic auth, an HTTP header with the following format must be provided with the POST request.
@@ -292,7 +292,7 @@ Based on the type of token and whether it is active or not, the returned JSON co
 Parameter   | Description                                                                                         | Type       |
 ------------+-----------------------------------------------------------------------------------------------------+------------|
 active      | An access token or refresh token.                                                                   | boolean    |  
-token_type  | The type of the token, either <em>access_token</em> or <em>refresh_token</em>.                      | String     |
+token_type  | The type of the token, either <em>access_token</em>, <em>refresh_token</em>, or <em>id_token</em>.  | String     |
 scope       | A space-delimited list of scopes.                                                                   | String     |
 client_id   | The ID of the client associated with the token.                                                     | String     |
 username    | The username associated with the token.                                                             | String     |
@@ -303,7 +303,7 @@ sub         | The subject of the token.                                         
 aud         | The audience of the token.                                                                          | String     |
 iss         | The issuer of the token.                                                                            | String     |
 jti         | The identifier of the token.                                                                        | String     |
-device_id   | The ID of the device assocaited with the token                                                      | String     |
+device_id   | The ID of the device associated with the token                                                      | String     |
 
 #### List of Errors 
 
@@ -325,7 +325,7 @@ invalid_request         | The request structure was invalid. E.g. the basic auth
     "iat" : 1451602800,
     "sub" : "00uid4BxXw6I6TV4m0g3",
     "aud" : "ciSZgrA9ROeHkfPCaXsa",
-    "iss" : "http://rain.okta1.com:1802",
+    "iss" : "https://your-org.okta.com",
     "jti" : "4eAWJOCMB3SX8XewDfVR"
 }
 ~~~
@@ -389,7 +389,7 @@ client_secret   | The client secret generated as a part of client registration. 
 A client may only revoke a token generated for that client.
 
 The client can authenticate by providing <em>client_id</em> and <em>client_secret</em> as a part of the URL-encoded form parameters (as described in table above),
-or it can use basic authentication by providing the <em>client_id</em> and <em>client_secret</em> as an Authroization header using the Basic auth scheme. 
+or it can use basic authentication by providing the <em>client_id</em> and <em>client_secret</em> as an Authorization header using the Basic auth scheme.
 Use one authentication mechanism with a given request. Using both returns an error.
 
 For authentication with Basic auth, an HTTP header with the following format must be provided with the POST request.
@@ -412,10 +412,7 @@ invalid_request         | The request structure was invalid. E.g. the basic auth
 #### Response Example (Success)
 
 ~~~http
-HTTP/1.1 200 OK
-Content-Type: application/json;charset=UTF-8
-{
-}
+HTTP/1.1 204 No Content
 ~~~
 
 #### Response Example (Error)
