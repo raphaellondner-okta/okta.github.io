@@ -286,8 +286,7 @@ Fetch a list of events from your Okta organization system log.
 
 ##### Request Parameters
 {:.api .api-request .api-request-params}
-the content linked to in "filter"? I left filter in even though the spec doesn't have it because of conversations
-in related docs. Notes after the parameter may not be true.
+
 
 Parameter | Description                                                                         | Param Type | DataType | Required | Default
 --------- | ----------------------------------------------------------------------------------- | ---------- | -------- | -------- | -------
@@ -355,6 +354,9 @@ Array of [Log objects](#log-model)
 
 ##### Request Example
 {:.api .api-request .api-request-example}
+
+> This operation requires [URL encoding](http://en.wikipedia.org/wiki/Percent-encoding). For example, `since=2016-05-25T00:00:00+00:00` is encoded as `since=2016-06-02T00%3A00%3A00%2B00%3A00`.
+
 
 ~~~sh
 http://rain-admin.okta1.com:1802/sage/api/v1/logs?since=2016-05-25T00:00:00+00:00&until=2016-06-01T23:59:59+00:00&limit=20&q=FAILURE

@@ -1051,8 +1051,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <p>Fetch a list of events from your Okta organization system log.</p>
 
 <h5 class="api api-request api-request-params" id="request-parameters">Request Parameters</h5>
-<p>the content linked to in “filter”? I left filter in even though the spec doesn’t have it because of conversations
-in related docs. Notes after the parameter may not be true.</p>
 
 <table>
   <thead>
@@ -1206,6 +1204,10 @@ Events published for a target user</p>
 <p>Array of <a href="#log-model">Log objects</a></p>
 
 <h5 class="api api-request api-request-example" id="request-example">Request Example</h5>
+
+<blockquote>
+  <p>This operation requires <a href="http://en.wikipedia.org/wiki/Percent-encoding">URL encoding</a>. For example, <code class="highlighter-rouge">since=2016-05-25T00:00:00+00:00</code> is encoded as <code class="highlighter-rouge">since=2016-06-02T00%3A00%3A00%2B00%3A00</code>.</p>
+</blockquote>
 
 <div class="highlighter-rouge"><pre class="highlight"><code>http://rain-admin.okta1.com:1802/sage/api/v1/logs?since<span class="o">=</span>2016-05-25T00:00:00+00:00&amp;until<span class="o">=</span>2016-06-01T23:59:59+00:00&amp;limit<span class="o">=</span>20&amp;q<span class="o">=</span>FAILURE
 http://rain-admin.okta1.com:1802/sage/api/v1/logs?since<span class="o">=</span>2016-05-25T00:00:00+00:00&amp;until<span class="o">=</span>2016-06-01T23:59:59+00:00&amp;limit<span class="o">=</span>20&amp;q<span class="o">=</span>

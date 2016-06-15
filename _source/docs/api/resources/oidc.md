@@ -365,13 +365,29 @@ All apps must roll over keys for adequate security. Please note the following:
 
 >Keys used to sign tokens automatically rotate and should always be resolved dynamically against the published JWKS. Your app might break if you hardcode public keys in your applications! Be sure to include key rollover in your implementation.
 
+>If your application cannot retrieve keys dynamically, the administrator can disable the automatic key rotation in the administration UI, [generate a key credential](apps.html#generate-new-application-key-credential) and [update the application](apps.html#update-key-credential-for-application) to use it for signing.
+
+### Get Keys
+{:.api .api-operation}
+
 <span class="api-uri-template api-uri-get"><span class="api-label">GET</span> /oauth2/v1/keys</span>
+
+If automatic key rotation is disabled, provide the <em>client_id</em> to fetch public keys for your app. Otherwise, this endpoint returns the public keys automatically rotated.
+Request Parameters
+{:.api .api-request .api-request-params}
+
+Parameter         | Description                                                                                        | Param Type | DataType  | Required | Default         |
+----------------- | -------------------------------------------------------------------------------------------------- | ---------- | --------- | -------- | --------------- |
+client_id         | Your app's client ID. | Query      | String    | FALSE    | null |
+
+Response Example
+{:.api .api-response .api-response-example}
 
 ~~~json
 {
   "keys": [
     {
-      "kid": "DS7gC_ljzzhv2cP1adQ7F26kvVRi3IGeo3PP9PPxoo"
+      "kid": "DS7gC_ljzzhv2cP1adQ7F26kvVRi3IGeo3PP9PPxoo",
       "alg": "RS256",
       "e": "AQAB",
       "n": "paDgqMZdppjqc2-Q1jvcJmUPvQ6Uwz1IofmuyTxh2C4OBXsAF0Szk_Y0jOa6pTWJAgbHF5bxkFbH11isA9WpNbuPa-CprC6gTfmpb
@@ -379,22 +395,7 @@ All apps must roll over keys for adequate security. Please note the following:
             6tSiNQdxqfGejZHLtsZ9ZcDwOQDp-zr8l5QvSdLFtkiu6AQxALUvtC05kpkQogI3hHsMN7QMFqMw55EVSWOhCK774Mov_gsh34YCl
             o64Qn_2GV4GGXuEAKfvCAYVBOyN-RWBHQV0qyIw",
       "kty": "RSA",
-      "use": "sig",
-      "x5c": [
-        "MIIDnDCCAoSgAwIBAgIGAUsU5Y67MA0GCSqGSIb3DQEBBQUAMIGOMQswCQYDVQQGEwJVUzETMBEGA1UECAwKQ2FsaWZvcm5pYTEWMBQGA
-         1UEBwwNU2FuIEZyYW5jaXNjbzENMAsGA1UECgwET2t0YTEUMBIGA1UECwwLU1NPUHJvdmlkZXIxDzANBgNVBAMMBnRyZXZvcjEcMBoGCS
-         qGSIb3DQEJARYNaW5mb0Bva3RhLmNvbTAeFw0xNTAxMjMwMzQ1MDNaFw00NTAxMjMwMzQ2MDNaMIGOMQswCQYDVQQGEwJVUzETMBEGA1U
-         ECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNU2FuIEZyYW5jaXNjbzENMAsGA1UECgwET2t0YTEUMBIGA1UECwwLU1NPUHJvdmlkZXIxDzAN
-         BgNVBAMMBnRyZXZvcjEcMBoGCSqGSIb3DQEJARYNaW5mb0Bva3RhLmNvbTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAKWg4
-         KjGXaaY6nNvkNY73CZlD70OlMM9SKH5rsk8YdguDgV7ABdEs5P2NIzmuqU1iQIGxxeW8ZBWx9dYrAPVqTW7j2vgqawuoE35qWwG8GA2It
-         WsLFXaYi3himDHMNeC1ztjaIxhDRRODfDt5CMK4VZOm9neUSzWLxEClYsegD2ZCv35SxWPgDplnX9uAS5LC5YpM28g5v6+rUojUHcanxn
-         o2Ry7bGfWXA8DkA6fs6/JeUL0nSxbZIrugEMQC1L7QtOZKZEKICN4R7DDe0DBajMOeRFUljoQiu++DKL/4LId+GApaOuEJ/9hleBhl7hA
-         Cn7wgGFQTsjfkVgR0FdKsiMCAwEAATANBgkqhkiG9w0BAQUFAAOCAQEAF99tKM4+djEcF4hvQkFuNmILMzuqBFOBvqcZStR1IheHJ69es
-         Nkw/QGFyhfVNgTvPf8BfY5A+sheFUDlDAXjWBeabaX1aUh1/Q6ac1izS2DzGT5O9Srs/c35ZGrsp4vwGeSfNzsMDhRV462ZMmKAmaIcjF
-         5MiplHizNH/K1x+3uHuU6DPlIWsMDvjuGwTArM45hGRZlnxFCVSaGToNF0ppgOFjRkeng7Fm2sJkd8P1jezUGHFemuaBWv9wxIe5GlgH4
-         00dEPsobfcjTc4AisxsHyUJwoxlmg9gZgjvUaSCpUMsPTOBhDIYaMKjTTY9Y68YMSg3+2tQ7hOVdiDk76rA=="
-      ],
-      "x5t": "3ov_aKYnBnqVGsC06S1KFV6OUl8"
+      "use": "sig"
     }
   ]
 }

@@ -81,6 +81,27 @@ title: API
                 <a href="https://pypi.python.org/pypi/okta" class="btn" target="_blank">Download SDK</a>
             </div>
         </article>
+        <article class="col-1-4">
+            <div class="sdk-img">
+				<a class="thumbnail signin-widget"  href="https://github.com/okta/okta-signin-widget" target="_blank">
+				</a>
+            </div>
+            <div class="content">
+                <ul class="sdk-list">
+                    <li>Okta Sign-In Widget</li>
+					<li>
+						<a class="" href="/docs/guides/okta_sign-in_widget">Getting Started</a>
+					</li>
+                    <li>
+                        <a class="" href="/docs/api/resources/okta_signin_widget">Documentation</a>
+                    </li>
+                    <li>
+                        <a class="" href="https://github.com/okta/okta-signin-widget">GitHub</a>
+                    </li>
+                </ul>
+                <a href="https://github.com/okta/okta-signin-widget" class="btn" target="_blank">Download SDK</a>
+            </div>
+        </article>
 	</div>
 </section>
 

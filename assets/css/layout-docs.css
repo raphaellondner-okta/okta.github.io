@@ -902,6 +902,10 @@ h6:hover .header-link {
     background-size: auto 85px;
     background-position: center;
     border: 1px solid; }
+  .section--sdk article .signin-widget {
+    background: transparent url(/assets/img/okta-signin-widget.png) no-repeat;
+    background-position: center;
+    border: 1px solid; }
   .section--sdk .content {
     margin: 0 auto; }
 

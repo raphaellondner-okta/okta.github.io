@@ -112,7 +112,7 @@ Advantages of using Okta Social Authentication include:
         After adding the `scope` and `nonce` parameters to your URL it should look something like this:
         `https://example.okta.com/oauth2/v1/authorize?idp=0oa0bcde12fghiJkl3m4&client_id=AbcDE0fGHI1jk2LM34no&scope=openid%20email%20profile&response_type=id_token&state=someState&nonce=someNonce`
 
-        To learn more about Okta's requirements for these parameters see the [Authorize Endpoint Parameter Details](/docs/api/resources/oidc.html#parameter-details).
+        To learn more about Okta's requirements for these parameters see the [Authorize Endpoint Parameter Details](/docs/api/resources/oauth2.html#parameter-details).
 
     4.  Add a `redirect_url` GET parameter to the Social Auth "Login URL".
         
