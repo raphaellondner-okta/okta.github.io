@@ -17,14 +17,13 @@ OpenID Connect extends OAuth 2.0:
  
 * Provides a signed `id_token` for the client and a UserInfo endpoint from which you can fetch user attributes.
 * Provides a standard set of scopes and claims for identities including profile, email, address, and phone.
-* Suppolies built-in registration, discovery, and metadata for dynamic federations.
-* Supports enterprise use with high assurance levels and workflows for key SAML use cases.
 
 NOTE: illustration needs clean-up, but is it useful here? If not, what do we want?
 
 ![OpenID Architecture Diagram](/assets/img/openID_overview.png)
 
-Think of OAuth 2.0 as an authorization framework for delegeated access to APIs, and OpenID Connect as an extension for authentication scenarios.
+Think of OAuth 2.0 as an authorization framework for delegeated access to APIs, and OpenID Connect
+as an SSO protocol for authenticating end-users and asserting their identity.
 
 ## OpenID Connect Workflows
 
@@ -33,17 +32,17 @@ OpenID Connect provides three basic workflows:
 * [Implicit flow](implicit-flow)
 * [Authorization code flow](authorization-code-flow)
 * [Hybrid flow](hybrid-flow)
-
-These flows don't necessarily map one-to-one with the different flows available in Okta. 
+* [Resource Owner Password Flow](resource-owner-password-flow]
+ 
 By understanding the underlying flows, you can choose the right flow for your goals.
  
 ### Implicit Flow 
 
 Implicit flow is the simplest, and is most often used for web apps including single-page apps (SPAs), because no 
 authorization code is returned. Implicit flow doesn't verify that the requesting client is the authenticated client.
-You can't refresh the tokens, so implicit flow is not ideal for mobile device apps.
+You can't refresh the tokens, so implicit flow is not ideal for mobile device apps. Implicit flow is also called a two-legged flow.
 
-Implicit flow is also called a two-legged flow:
+#### Implicit Flow Step-by-Step
 
 1. A client sends an authentication request from a browser app's sign-in page.
 2. The request is redirected to Okta's authorization endpoint `/outh2/v1/authorize` and evaluated. 
@@ -68,15 +67,16 @@ Okta sends an `id_token` and access token to the newspaper's server, which then 
 ### Authorization Code Flow
 
 Authorization code flow verifies that the requesting client is the authenticated client.
-Instead of receiving an `id_token`, the authorization code flow returns an authorization code, which can be
-exchanged for an access token. This is also called a three-legged flow:
+Instead of receiving an `id_token` directly from the authorization endpoint, 
+the client receives an authorization code which can be
+exchanged for an access token, refresh token, and `id_token`. 
+ 
+Authorization code flow is also called a three-legged flow:
 
 1. A client sends an authentication request with request parameters.
 2. The request is redirected to Okta's authorization endpoint `/outh2/v1/authorize` and evaluated. 
 3. If authorization is successful, Okta returns an `id_token` and an access token in the response body.
-4. The client validates the `id_token` and exchanges the access token for the end user's subject identifier (???).
-
-NOTE: The following image--what needs to change? Besides the Azure AD, obviously.
+4. The client validates the `id_token` and exchanges the access token for the end user's subject identifier.
 
 ![Web App to Web API Diagram](/assets/img/app_to_api.png)
 
@@ -118,6 +118,16 @@ Example: NOTE: need help with this example.
 
 Example: There are a lot of app types in Okta. What about SWA? template apps? SAML apps? 
 
+### Resource Owner Password Flow
+
+xxx
+
+#### Resource Owner Password Flow Step-by-Step
+
+XXXXX
+
+Add image (don't have one)
+
 ### Which Flow?
 
 Use the flow that corresponds to the type of app you're authenticating and the goals of the authentication:
@@ -129,7 +139,7 @@ attacks (you can't keep client secrets secure), and you don't need to refresh an
 * Web Server Application: Use authorization code flow so you can safely verify the client is the authenticated client.
 Because the authorization code isn't useful until it's exchanged for a token, there's no vulnerability to a man-in-the-middle attack.
 * Native Applications (desktops, mobile devices, or tablets): Use hybrid flow, because you need the ability to refresh tokens, you can keep client secrets secure,
-and a client ID is needed to verify that the client is the authenticated client.
+and a client secret is needed to verify that the client is the authenticated client.
 
 NOTE: What's the difference between a web applciation and a web server application? 
 NOTE: If we want more of the details from https://azure.microsoft.com/en-us/documentation/articles/active-directory-authentication-scenarios/, I'll need someone to
