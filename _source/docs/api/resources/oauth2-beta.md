@@ -107,7 +107,7 @@ Error Id         | Details                                                      
 -----------------| -----------------------------------------------------------------------| 
 unsupported_response_type  | The specified response type is invalid or unsupported.   | 
 unsupported_response_mode  | The specified response mode is invalid or unsupported. This error is also thrown for disallowed response modes. For example, if the query response mode is specified for a response type that includes id_token.    | 
-invalid_scope   | The scopes list contains an invalid or unsupported value.    | 
+invalid_scope   | The scopes list contains an invalid or unsupported value.    |
 server_error    | The server encountered an internal error.    | 
 temporarily_unavailable    | The server is temporarily unavailable, but should be able to process the request at a later time.    |
 invalid_request | The request is missing a necessary parameter or the parameter has an invalid value. |
@@ -167,15 +167,17 @@ The following parameters can be posted as a part of the URL-encoded form values 
 
 Parameter          | Description                                                                                         | Type       |
 -------------------+-----------------------------------------------------------------------------------------------------+------------|
-grant_type         | Can be one of the following: <em>authorization_code</em>, <em>password</em>, or <em>refresh_token</em>. Determines the mechanism Okta will use to authorize the creation of the tokens. | String |  
+grant_type         | Can be one of the following: <em>authorization_code</em>, <em>password</em>, <em>refresh_token</em> or <em>client_credentials</em>. Determines the mechanism Okta will use to authorize the creation of the tokens. | String |
 code               | Expected if grant_type specified <em>authorization_code</em>. The value is what was returned from the /oauth2/v1/authorize endpoint. | String
 refresh_token      | Expected if the grant_type specified <em>refresh_token</em>. The value is what was returned from this endpoint via a previous invocation. | String |
-scope              | Expected only if <em>refresh_token</em> is specified as the grant type. This is a list of scopes that the client wants to be included in the Access Token. These scopes have to be subset of the scopes used to generate the Refresh Token in the first place. | String |
+scope              | Expected if <em>refresh_token</em> or <em>client_credentials</em> is specified as the grant type. This is a list of scopes that the client wants to be included in the Access Token. These scopes have to be subset of the scopes used to generate the Refresh Token in the first place if grant type is <em>refresh_token</em>. | String |
 redirect_uri       | Expected if grant_type is <em>authorization_code</em>. Specifies the callback location where the authorization was sent; must match what is preregistered in Okta for this client. | String |
 client_id          | The client ID generated as a part of client registration. This is used in conjunction with the <em>client_secret</em> parameter to authenticate the client application. | String |
 client_secret      | The client secret generated as a part of client registration. This is used in conjunction with the <em>client_id</em> parameter to authenticate the client application. | String |
 code_verifier      | The code verifier of [PKCE](#parameter-details). Okta uses it to recompute the code_challenge and verify if it matches the original code_challenge in the authorization request. | String |
 
+
+> The [Client Credentials](https://tools.ietf.org/html/rfc6749#section-4.4) flow (if `grant_types` is `client_credentials`) is currently in **Beta** status.
 
 ##### Token Authentication Methods
 
@@ -196,7 +198,9 @@ Based on the grant type, the returned JSON contains a different set of tokens.
 Input grant type   | Output token types                    |
 -------------------|---------------------------------------|
 authorization_code | ID Token, Access Token, Refresh Token |
+password           | Access Token                          |
 refresh_token      | Access Token, Refresh Token           |
+client_credentials | Access Token                          |
 
 ##### Refresh Tokens for Web and Native Applications
 
@@ -213,6 +217,7 @@ invalid_client          | The specified client id wasn't found. |
 invalid_request         | The request structure was invalid. E.g. the basic authentication header was malformed, or both header and form parameters were used for authentication or no authentication information was provided. |
 invalid_grant           | The <em>code</em> or <em>refresh_token</em> value was invalid, or the <em>redirect_uri</em> does not match the one used in the authorization request. |
 unsupported_grant_type  | The grant_type was not <em>authorization_code</em> or <em>refresh_token</em>. |
+invalid_scope           | The scopes list contains an invalid or unsupported value.    |
 
 #### Response Example (Success)
 
@@ -262,7 +267,7 @@ The admin can configure custom scopes and claims via the UI <a href="...link to 
 If the request that generates the access token contains any custom scopes, those scopes will be part of the <b>scp</b> claim together with the scopes provided from the [OIDC specification](http://openid.net/specs/openid-connect-core-1_0.html).
 
 #### Custom claims
-All configured custom claims will be part of the access token and evaluated for the user.
+All configured custom claims will be part of the access token. They will be evaluated for the user if the grant type is not <em>client_credentials</em>.
 
 #### Response Example (Access Token)
 ~~~json
