@@ -20,10 +20,10 @@ OpenID Connect extends OAuth 2.0:
 
 ![OpenID Architecture Diagram](/assets/img/openID_overview.png)
 
-Think of OAuth 2.0 as an authorization framework for delegated access to APIs, and OpenID Connect
+OAuth 2.0 is an authorization framework for delegated access to APIs, and OpenID Connect
 as an SSO protocol for authenticating end-users and asserting their identity.
 
-Okta is the identity provider (IP), responsible for verifying the identity of users and applications that exist in an organization’s directory, 
+Okta is the identity provider (IP) responsible for verifying the identity of users and applications that exist in an organization’s directory, 
 and ultimately issuing identity tokens upon successful authentication of those users and applications.
 
 An application that wants to outsource authentication to Okta must be registered in Okta, which uniquely identifies the app via its client credentials.
@@ -33,7 +33,7 @@ Once a user has been authenticated, the application must validate the identity t
 See the "Signing Key Rollover" section for more information on the necessary logic you must have in your application to ensure it’s always updated with the latest keys.
 
 The flow of requests and responses for the authentication process is based on OAuth 2.0 and OpenID Connect protocols.
-The properties you need depend on which client profile and use case you are targeting, as explained in [OpenID Connect Workflows](openid-connect-workflows)
+The properties you need depend on which client profile and use case you are targeting, as explained in [Choosing the Right Workflow](choosing-the-right-workflow).
 
 ## Claims
 
@@ -43,86 +43,73 @@ For example, they can be used to validate the token, identify the subject's dire
 and determine the subject's authorization. The claims present in any given security token are dependent upon the type of token, 
 the type of credential used to authenticate the user, and the application configuration.
 
-## OpenID Connect Workflows
+## Workflow Options
 
-* [Implicit flow](implicit-flow)
-* [Authorization code flow](authorization-code-flow)
-* [Hybrid flow](hybrid-flow)
-* [Resource Owner Password Flow](resource-owner-password-flow]
+Ther are four OpenID Connect workflows documented in the [OpenID spec](http://openid.net/specs/openid-connect-core-1_0.html#Authentication):
+
+* Implicit flow
+* Authorization code flow
+* Hybrid flow
+* Resource Owner Password Flow
+
+Choosing the right flow depends on the type of application you're integrating and what you need to do with it.
+
+## Choosing the Rigth Flow
+
+Three flows are available for these application types:
+
+* Single-page apps (JavaScript app or browser plugin): implicit flow or hybrid flow are supported. (Client Types and Flows spec only lists implicit. ?)
+    * You can use chiclets.
+    * Apps can be service-provider initiated.
+    * You can use claims for groups.
+    * Okta provides a UI for configuring OpenID Connect settings during app creation. <<or did we mean something else?>>
+* Web apps (server-side app with an end user): implicit flow or hybrid flow are best. (but the Client Types and Flows says authorization code flow?)
+    * You can use chiclets.
+    * You can use claims for groups.
+* Native apps installed on a mobile device or desktop: authorization code flow is supported.
+    * You can use custom redirect URIs like `myApp://oauth:2.0:native`.
+    * You have access to several client authentication options, including <em>client_id</em> and <em>client_secret</em>, [JWT client authentication](https://tools.ietf.org/html/rfc7523#section-2.2), or [proof key for code exchange](https://tools.ietf.org/html/rfc7636). (are we calling this something different?)
+    * Can they use claims for groups?
+* Service account (server-side app with no end user): 
+    * No client authentication is needed, because the JWT assertion acts as the authentication.
+    * You can use [JWT Bearer authorization grants](https://tools.ietf.org/html/rfc7523#section-2.1) (this is for more than SSO, yes?)
+    * Claims for groups? 
+    
+### Native App Requirements
  
-By understanding the underlying flows, you can choose the right flow for your goals.
+Be aware of two important requirements for native apps:
  
-### Implicit Flow 
+* For native applications, the <em>client_id</em> and <em>client_secret</em> are embedded in the source code of the application. Thus, <em>client_secret</em> is not a secret.
+* Native apps must use [PKCE](https://tools.ietf.org/html/rfc7636) to mitigate authorization code interception. For more information, see [OAuth2.0](http://developer.okta.com/docs/api/resources/oauth2#parameter-details).
 
-Implicit flow is the simplest, and is used for single-page apps (SPAs), because no 
-authorization code is returned. SPAs can also use hybrid flow.
+<<I left out the sections Client Authentication Protocol and User Authetnication Protocol and beyond from https://oktawiki.atlassian.net/wiki/display/eng/New+OAuth+Architecture#NewOAuthArchitecture-ClientTypesandFlows
+because they seemed more OAuth than OIDC. Let me know if that's wrong.>>
+
+### Simple Access Policies and Complete OAuth Flows
+
+<<I though resource servers were coming in July, and there's no discussion of app types in the spec here. Here's all the info for scenario 4 from spec.
+I don't think they map cleanly to separate use cases like in the previous section. Should this be one list of what you can do? For which app types? 
+
+
+Scenario 4: Oauth with Simple Access policy: Oauth client with a private resource that doesn’t have an independent ID and No policy for limiting scopes nor claims
  
-Implicit flow doesn't verify that the requesting client is the authenticated client.
-You can't refresh the tokens, so implicit flow is not ideal for mobile device apps. Implicit flow is also called a two-legged flow.
-
-#### Implicit Flow Step-by-Step
-
-1. A client sends an authentication request from a browser app's sign-in page.
-2. The request is redirected to Okta's authorization endpoint `/oauth2/v1/authorize` and evaluated. 
-3. If authorization is successful, Okta returns an <em>id_token</em> and an access token (if requested).
-
-### Authorization Code Flow
-
-Authorization code flow verifies that the requesting client is the authenticated client.
-Instead of receiving an <em>id_token</em> directly from the authorization endpoint, 
-the client receives an authorization code which can be
-exchanged for an access token, refresh token, and <em>id_token</em>. 
+Ability to define additional custom scopes
+Access token will haven new custom scopes on the top of the OIDC scopes
+That token will be able to hit the userinfo endpoint as well as my private resource
  
-Authorization code flow is also called a three-legged flow:
+Story 4.1 admin can define custom access token claims for private resource
+Story 4.2: Token revocation through the API 
+Support for RFC token revocation for refresh tokens (through API for a known token)
+Support for RFC token introspection 
 
-1. A client sends an authentication request with request parameters.
-2. The request is redirected to Okta's authorization endpoint `/oauth2/v1/authorize` and evaluated. 
-3. If authorization is successful, Okta returns an <em>id_token</em> and an access token in the response body.
-4. The client validates the <em>id_token</em> and exchanges the access token for the end user's subject identifier.
+Story 4.3: Support for Client credentials flow 
+For client credential we need to enable the policy verification without the user context. This a bit simpler in the private resource use case because only the client has access to that resource
+-       Need to add the ability to define an app that’s accessible by a service account (Need to design)
+-       Enable client creds with shared secrets
+Story 4.4: Support for Resource owner password flow
 
-### Hybrid Flow
+<<Anything Else>>
 
-Hybrid flow is similar to authorization code flow, but includes additional response type properties.
-
-1. A client sends an authentication request with request parameters.
-2. The request is redirected to Okta's authorization endpoint `/oauth2/v1/authorize` and evaluated. 
-3. If authorization is successful, Okta returns an <em>id_token</em>. 
-
-### Resource Owner Password Flow
-
-With the resource owner password flow, the user provides their credentials (username and password) directly to the application, 
-which uses the credentials to obtain an access token directly. This grant type should only be enabled on the authorization server 
-if other flows are not viable. Also, it should only be used if the application is trusted by the user; for example, 
-the application is owned by the service, or the user's desktop OS. 
-
-This flow is typically used for legacy applications that solicit user credentials via a native interface 
-and don't have the ability to launch a browser.
-
->Note: The <em>grant_type</em> must be `password`, and <em>username</em> and <em>password</em> required for resource owner password flows.
-
-#### Resource Owner Password Flow Step-by-Step
-
-1. The resource owner provides the client with username and password.
-2. Using the provided credentials, the client requests an access token from the authorization server's token endpoint (that's us?). During the request, the client authenticates with the authorization server.
-3. The authorization server authenticates the client and validates the resource owner credentials, and if valid, issues an access token.
-
-### Which Flow?
-
-Use the flow that corresponds to the type of app you're authenticating and the goals of the authentication:
-
-* Single page application (SPA): Use implicit flow because you can't protect from man-in-the-middle
-attacks (you can't keep client secrets secure), and you don't need to refresh any tokens.
-* Web Server Application: Use authorization code flow so you can safely verify the client is the authenticated client.
-Because the authorization code isn't useful until it's exchanged for a token, there's no vulnerability to a man-in-the-middle attack.
-* Native Applications (desktops, mobile devices, or tablets): Use hybrid flow, because you need the ability to refresh tokens, you can keep client secrets secure,
-and a client secret is needed to verify that the client is the authenticated client. 
-
-Table:
-
-Flow          Required           Description
-
-Resource owner password flow          |  | ???
-not sure we want/need this. 
 
 ## ID Token
 
