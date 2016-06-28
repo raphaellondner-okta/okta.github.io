@@ -1309,6 +1309,7 @@ Enrolls a user with a [factor](factors.html#supported-factors-for-providers) ass
 - [Enroll YubiKey Factor](#enroll-yubikey-factor)
 
 > This operation is only available for users that have not previously enrolled a factor and have transitioned to the `MFA_ENROLL` [state](#transaction-state).
+> When the required factors is not yet enrolled/activated the status will remain MFA_ENROLL even after enrolling an optional factor.
 
 #### Request Parameters
 {:.api .api-request .api-request-params}
@@ -1372,6 +1373,133 @@ curl -v -X POST \
         "lastName": "Murphy",
         "locale": "en_US",
         "timeZone": "America/Los_Angeles"
+      }
+    }
+  }
+}
+~~~
+
+##### Response Example When Enrolling Optional Question Factor
+{:.api .api-response .api-response-example}
+
+In cases when we are enrolling/activating optional factor and the required factor is not activated yet the status of the response will be MFA_ENROLL. In the example that follows we activated the question factor (optional) and the required factor sms/OKTA is not yet activated.
+
+~~~json
+{
+  "stateToken": "00wJKSFWzNd8GriZ0EBOTkuQUDBbxejgmr1GVrjUcr",
+  "expiresAt": "2016-06-28T14:30:07.000Z",
+  "status": "MFA_ENROLL",
+  "factorResult": "ACTIVE",
+  "relayState": "",
+  "_embedded": {
+    "user": {
+      "id": "00uk2o5WbrisuoziO0g3",
+      "passwordChanged": "2016-06-28T13:59:11.000Z",
+      "profile": {
+        "login": "adam@test.com",
+        "firstName": "Adam",
+        "lastName": "Smith",
+        "locale": "en_US",
+        "timeZone": "America/Los_Angeles"
+      }
+    },
+    "factors": [
+      {
+        "factorType": "question",
+        "provider": "OKTA",
+        "vendorName": "OKTA",
+        "_links": {
+          "questions": {
+            "href": "http://rain.okta1.com:1802/api/v1/users/00uk2o5WbrisuoziO0g3/factors/questions",
+            "hints": {
+              "allow": [
+                "GET"
+              ]
+            }
+          },
+          "enroll": {
+            "href": "http://rain.okta1.com:1802/api/v1/authn/factors",
+            "hints": {
+              "allow": [
+                "POST"
+              ]
+            }
+          }
+        },
+        "status": "ACTIVE",
+        "enrollment": "OPTIONAL"
+      },
+      {
+        "factorType": "token:software:totp",
+        "provider": "OKTA",
+        "vendorName": "OKTA",
+        "_links": {
+          "enroll": {
+            "href": "http://rain.okta1.com:1802/api/v1/authn/factors",
+            "hints": {
+              "allow": [
+                "POST"
+              ]
+            }
+          }
+        },
+        "status": "NOT_SETUP",
+        "enrollment": "OPTIONAL"
+      },
+      {
+        "factorType": "token:software:totp",
+        "provider": "GOOGLE",
+        "vendorName": "GOOGLE",
+        "_links": {
+          "enroll": {
+            "href": "http://rain.okta1.com:1802/api/v1/authn/factors",
+            "hints": {
+              "allow": [
+                "POST"
+              ]
+            }
+          }
+        },
+        "status": "NOT_SETUP",
+        "enrollment": "OPTIONAL"
+      },
+      {
+        "factorType": "sms",
+        "provider": "OKTA",
+        "vendorName": "OKTA",
+        "_links": {
+          "enroll": {
+            "href": "http://rain.okta1.com:1802/api/v1/authn/factors",
+            "hints": {
+              "allow": [
+                "POST"
+              ]
+            }
+          }
+        },
+        "status": "NOT_SETUP",
+        "enrollment": "REQUIRED",
+        "_embedded": {
+          "phones": [
+            {
+              "id": "mblk5zqn91Wjs9Q7D0g3",
+              "profile": {
+                "phoneNumber": "+1 XXX-XXX-6789"
+              },
+              "status": "ACTIVE"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "_links": {
+    "cancel": {
+      "href": "http://rain.okta1.com:1802/api/v1/authn/cancel",
+      "hints": {
+        "allow": [
+          "POST"
+        ]
       }
     }
   }
