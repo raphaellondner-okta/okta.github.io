@@ -1309,7 +1309,7 @@ Enrolls a user with a [factor](factors.html#supported-factors-for-providers) ass
 - [Enroll YubiKey Factor](#enroll-yubikey-factor)
 
 > This operation is only available for users that have not previously enrolled a factor and have transitioned to the `MFA_ENROLL` [state](#transaction-state).
-> When the required factors is not yet enrolled/activated the status will remain MFA_ENROLL even after enrolling an optional factor.
+> When required factors are not yet enrolled or activated the status remains MFA_ENROLL, even after enrolling an optional factor.
 
 #### Request Parameters
 {:.api .api-request .api-request-params}
@@ -1382,7 +1382,9 @@ curl -v -X POST \
 ##### Response Example When Enrolling Optional Question Factor
 {:.api .api-response .api-response-example}
 
-In cases when we are enrolling/activating optional factor and the required factor is not activated yet the status of the response will be MFA_ENROLL. In the example that follows we activated the question factor (optional) and the required factor sms/OKTA is not yet activated.
+If you enroll or activate an optional factor but the required factor is not activated, the status of the response is MFA_ENROLL. 
+
+In the example that follows the question factor (optional) is activated and the required factor sms/OKTA is not yet activated.
 
 ~~~json
 {
