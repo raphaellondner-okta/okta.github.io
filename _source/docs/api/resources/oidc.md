@@ -13,39 +13,41 @@ and the client obtains an Okta session.
 
 ## Authentication Basics with OAuth 2.0 and OpenID Connect
 
-OpenID Connect extends OAuth 2.0:
+OAuth 2.0 is an authorization framework for delegated access to APIs, and OpenID Connect
+is an SSO protocol for authenticating end-users and asserting their identity. OpenID Connect extends OAuth 2.0:
  
-* Provides a signed <em>id_token</em> for the client and a UserInfo endpoint from which you can fetch user attributes.
+* Provides a signed *id_token* for the client and a UserInfo endpoint from which you can fetch user attributes.
 * Provides a standard set of scopes and claims for identities including profile, email, address, and phone.
 
 ![OpenID Architecture Diagram](/assets/img/openID_overview.png)
 
-OAuth 2.0 is an authorization framework for delegated access to APIs, and OpenID Connect
-as an SSO protocol for authenticating end-users and asserting their identity.
-
 Okta is the identity provider (IP) responsible for verifying the identity of users and applications that exist in an organization’s directory, 
-and ultimately issuing identity tokens upon successful authentication of those users and applications.
+and ultimately issuing identity tokens upon successful authentication of those users and applications. 
 
-An application that wants to outsource authentication to Okta must be registered in Okta, which uniquely identifies the app via its client credentials.
-Once a user has been authenticated, the application must validate the identity token’s integrity. For more information, see [Validating ID Tokens](#validating-id-tokens).
+The basic authentication flow with Okta as your identity provider:
+
+1. The application sends a request to Okta.
+2. Okta authenticates the client.
+3. Okta authenticates the user.
+4. Okta approves or denies the requested scopes.
+5. Okta mints a token and send it in the response. 
+6. The application validates the identity token’s integrity. For more information, see [Validating ID Tokens](#validating-id-tokens).
 
 > Important: Okta uses public key cryptography to sign tokens and verify that they are valid. 
-See the "Signing Key Rollover" section for more information on the necessary logic you must have in your application to ensure it’s always updated with the latest keys.
+See the last section of [Validating ID Tokens](#validating-id-tokens) for more information on the necessary logic you must have in your application to ensure it’s always updated with the latest keys.
 
 The flow of requests and responses for the authentication process is based on OAuth 2.0 and OpenID Connect protocols.
 The properties you need depend on which client profile and use case you are targeting, as explained in [Choosing the Right Workflow](choosing-the-right-workflow).
 
 ## Claims
 
-ID tokens issued by Okta contain claims, or assertions of information about the subject that has been authenticated. 
-These claims can be used by the application for various tasks. 
-For example, they can be used to validate the token, identify the subject's directory tenant, display user information, 
-and determine the subject's authorization. The claims present in any given security token are dependent upon the type of token, 
+ID tokens issued by Okta contain claims, which are statements about a subject (user).  
+For example, the claim can be about a name, identity, key, group, or privilege. The claims in a security token are dependent upon the type of token, 
 the type of credential used to authenticate the user, and the application configuration.
 
 ## Workflow Options
 
-Ther are four OpenID Connect workflows documented in the [OpenID spec](http://openid.net/specs/openid-connect-core-1_0.html#Authentication):
+Four OpenID Connect workflows are documented in the [OpenID spec](http://openid.net/specs/openid-connect-core-1_0.html#Authentication):
 
 * Implicit flow
 * Authorization code flow
@@ -54,7 +56,7 @@ Ther are four OpenID Connect workflows documented in the [OpenID spec](http://op
 
 Choosing the right flow depends on the type of application you're integrating and what you need to do with it.
 
-## Choosing the Rigth Flow
+## Choosing the Right Flow
 
 Three flows are available for these application types:
 
@@ -68,48 +70,15 @@ Three flows are available for these application types:
     * You can use claims for groups.
 * Native apps installed on a mobile device or desktop: authorization code flow is supported.
     * You can use custom redirect URIs like `myApp://oauth:2.0:native`.
-    * You have access to several client authentication options, including <em>client_id</em> and <em>client_secret</em>, [JWT client authentication](https://tools.ietf.org/html/rfc7523#section-2.2), or [proof key for code exchange](https://tools.ietf.org/html/rfc7636). (are we calling this something different?)
+    * You have access to several client authentication options, including *client_id* and *client_secret*, [JWT client authentication](https://tools.ietf.org/html/rfc7523#section-2.2), or [proof key for code exchange](https://tools.ietf.org/html/rfc7636). (are we calling this something different?)
     * Can they use claims for groups?
-* Service account (server-side app with no end user): 
-    * No client authentication is needed, because the JWT assertion acts as the authentication.
-    * You can use [JWT Bearer authorization grants](https://tools.ietf.org/html/rfc7523#section-2.1) (this is for more than SSO, yes?)
-    * Claims for groups? 
     
 ### Native App Requirements
  
 Be aware of two important requirements for native apps:
  
-* For native applications, the <em>client_id</em> and <em>client_secret</em> are embedded in the source code of the application. Thus, <em>client_secret</em> is not a secret.
+* For native applications, the *client_id* and *client_secret* are embedded in the source code of the application. Thus, *client_secret* is not a secret.
 * Native apps must use [PKCE](https://tools.ietf.org/html/rfc7636) to mitigate authorization code interception. For more information, see [OAuth2.0](http://developer.okta.com/docs/api/resources/oauth2#parameter-details).
-
-<<I left out the sections Client Authentication Protocol and User Authetnication Protocol and beyond from https://oktawiki.atlassian.net/wiki/display/eng/New+OAuth+Architecture#NewOAuthArchitecture-ClientTypesandFlows
-because they seemed more OAuth than OIDC. Let me know if that's wrong.>>
-
-### Simple Access Policies and Complete OAuth Flows
-
-<<I though resource servers were coming in July, and there's no discussion of app types in the spec here. Here's all the info for scenario 4 from spec.
-I don't think they map cleanly to separate use cases like in the previous section. Should this be one list of what you can do? For which app types? 
-
-
-Scenario 4: Oauth with Simple Access policy: Oauth client with a private resource that doesn’t have an independent ID and No policy for limiting scopes nor claims
- 
-Ability to define additional custom scopes
-Access token will haven new custom scopes on the top of the OIDC scopes
-That token will be able to hit the userinfo endpoint as well as my private resource
- 
-Story 4.1 admin can define custom access token claims for private resource
-Story 4.2: Token revocation through the API 
-Support for RFC token revocation for refresh tokens (through API for a known token)
-Support for RFC token introspection 
-
-Story 4.3: Support for Client credentials flow 
-For client credential we need to enable the policy verification without the user context. This a bit simpler in the private resource use case because only the client has access to that resource
--       Need to add the ability to define an app that’s accessible by a service account (Need to design)
--       Enable client creds with shared secrets
-Story 4.4: Support for Resource owner password flow
-
-<<Anything Else>>
-
 
 ## ID Token
 
@@ -119,7 +88,7 @@ as well as claims about the authenticated user.
 
 ID Tokens should always be [validated](#validating-id-tokens) by the client to ensure their integrity.
 
-The ID Token (<em>id_token</em>) consists of three period-separated, base64URL-encoded JSON segments: [a header](#header), [the payload](#payload), and [the signature](#signature). 
+The ID Token (*id_token*) consists of three period-separated, base64URL-encoded JSON segments: [a header](#header), [the payload](#payload), and [the signature](#signature). 
 
 ### Header
 
@@ -170,7 +139,7 @@ The ID Token (<em>id_token</em>) consists of three period-separated, base64URL-e
 
 ### Signature
 
-This is the digital signature that Okta signs, using the public key identified by the <em>kid</em> property in the header section.
+This is the digital signature that Okta signs, using the public key identified by the *kid* property in the header section.
 
 ### ID Token Claims
 
@@ -184,7 +153,7 @@ Claims in the header are always returned.
 | Property     | Description                                                                      | DataType     | Example                  |
 |--------------+---------+--------------------------------------------------------------------------------------------+--------------|--------------------------|
 | alg          | Identifies the digital signature algorithm used. This is always be RS256.      | String       | "RS256"                  |
-| kid          | Identifies the <em>public-key</em> used to sign the <em>id_token</em>. The corresponding <em>public-key</em> can be found as a part of the [well-known configuration's](#openid-connect-discovery-document) <em>jwks_uri</em> value.                                  | String       | "a5dfwef1a-0ead3f5223_w1e" |
+| kid          | Identifies the *public-key* used to sign the *id_token*. The corresponding *public-key* can be found as a part of the [well-known configuration's](#openid-connect-discovery-document) *jwks_uri* value.                                  | String       | "a5dfwef1a-0ead3f5223_w1e" |
 
 #### Claims in the payload section
 
@@ -225,9 +194,9 @@ Claims in the payload are independent of scope (always returned) or dependent on
 | zoneinfo     |  profile  | String representing the user's time zone.   |  String   |  	"America/Los_Angeles"    |
 | locale     |  profile   | Language and [ISO3166‑1](http://www.iso.org/iso/country_codes) country code in uppercase, separated by a dash.   | String    | "en-US"     |
 | updated_at     | profile    | Time the user's information was last updated, represented in Unix time (seconds).   | Integer    | 1311280970     |
-| email     |  email   | User's preferred e-mail address. The resource provider must <em>not</em> rely upon this value being unique.   | String    | "john.doe@example.com"     |
+| email     |  email   | User's preferred e-mail address. The resource provider must *not* rely upon this value being unique.   | String    | "john.doe@example.com"     |
 | email_verified     |  email   | True if the user's e-mail address has been verified; otherwise false.   | boolean    | true     |
-| address     | address    | User's preferred postal address. The value of the address member is a JSON structure containing <em>street_address</em>, <em>locality</em>, <em>region</em>, <em>postal_code</em>, and <em>country</em>.   | JSON structure    | { "street_address": "123 Hollywood Blvd.", "locality": "Los Angeles", "region": "CA", "postal_code": "90210", "country": "US" }     |
+| address     | address    | User's preferred postal address. The value of the address member is a JSON structure containing *street_address*, *locality*, *region*, *postal_code*, and *country*.   | JSON structure    | { "street_address": "123 Hollywood Blvd.", "locality": "Los Angeles", "region": "CA", "postal_code": "90210", "country": "US" }     |
 | phone_number     |  phone   | User's preferred telephone number in E.164 format.   | String    | 	"+1 (425) 555-1212"     |
 
 >The client can also optionally request an Access Token along with the ID Token. In this case, in order to keep the size of the ID Token small, the ID Token body does not contain all the scope dependent claims. 
@@ -284,7 +253,7 @@ Returns a JSON document with information requested in the scopes list of the tok
 }
 ~~~
 
-The claims in the response are identical to those returned for the requested scopes in the <em>id_token</em> JWT, except for the sub-claim which is always present. 
+The claims in the response are identical to those returned for the requested scopes in the *id_token* JWT, except for the sub-claim which is always present. 
 See [Scope-Dependent Claims](#scope-dependent-claims-not-always-returned) for more information about individual claims.
 
 #### Response Example (Error)
@@ -317,27 +286,27 @@ and only via POST data or within request headers. If you store them on your serv
 
 Clients must validate the ID Token in the Token Response in the following manner:
 
-1. Verify that the <em>iss</em> (issuer) claim in the ID Token exactly matches the issuer identifier for your Okta org (which is typically obtained during [Discovery](#openid-connect-discovery-document). 
-2. Verify that the <em>aud</em> (audience) claim contains the <em>client_id</em> of your app.
-3. Verify the signature of the ID Token according to [JWS](https://tools.ietf.org/html/rfc7515) using the algorithm specified in the JWT <em>alg</em> header property. Use the public keys provided by Okta via the [Discovery Document](#openid-connect-discovery-document).
-4. Verify that the expiry time (from the <em>exp</em> claim) has not already passed.
-5. A <em>nonce</em> claim must be present and its value checked to verify that it is the same value as the one that was sent in the Authentication Request. The client should check the nonce value for replay attacks.
-6. The client should check the <em>auth_time</em> claim value and request re-authentication using the <em>prompt=login</em> parameter if it determines too much time has elapsed since the last end-user authentication.
+1. Verify that the *iss* (issuer) claim in the ID Token exactly matches the issuer identifier for your Okta org (which is typically obtained during [Discovery](#openid-connect-discovery-document). 
+2. Verify that the *aud* (audience) claim contains the *client_id* of your app.
+3. Verify the signature of the ID Token according to [JWS](https://tools.ietf.org/html/rfc7515) using the algorithm specified in the JWT *alg* header property. Use the public keys provided by Okta via the [Discovery Document](#openid-connect-discovery-document).
+4. Verify that the expiry time (from the *exp* claim) has not already passed.
+5. A *nonce* claim must be present and its value checked to verify that it is the same value as the one that was sent in the Authentication Request. The client should check the nonce value for replay attacks.
+6. The client should check the *auth_time* claim value and request re-authentication using the *prompt=login* parameter if it determines too much time has elapsed since the last end-user authentication.
 
-Step 3 involves downloading the public JWKS from Okta (specified by the <em>jwks_uri</em> property in the [discovery document](#openid-connect-discovery-document). The result of this call is a [JSON Web Key](https://tools.ietf.org/html/rfc7517) set.
+Step 3 involves downloading the public JWKS from Okta (specified by the *jwks_uri* property in the [discovery document](#openid-connect-discovery-document). The result of this call is a [JSON Web Key](https://tools.ietf.org/html/rfc7517) set.
 
-Each public key is identified by a <em>kid</em> attribute, which corresponds with the <em>kid</em> claim in the [ID Token header](#claims-in-the-header-section).
+Each public key is identified by a *kid* attribute, which corresponds with the *kid* claim in the [ID Token header](#claims-in-the-header-section).
 
-The ID Token and the access token are signed by an RSA private key. Okta publishes the corresponding public key and adds a public-key identifier <em>kid</em> in the ID Token header.
-To minimize the effects of key rotation, your application should check the <em>kid</em>, and if it has changed, check the <em>jwks_uri</em> value in the [well-known configuration](#openid-connect-discovery-document) for a new public key and <em>kid</em>. 
+The ID Token is signed by an RSA private key. Okta publishes the corresponding public key and adds a public-key identifier *kid* in the ID Token header.
+To stay in sync with Okta's key rotation, your application should check the *kid*, and if it has changed, check the *jwks_uri* value in the [well-known configuration](#openid-connect-discovery-document) for a new public key and *kid*. 
 
 All apps must roll over keys for adequate security. Please note the following:
 
 * For security purposes, Okta automatically rotates keys used to sign the token.
-* The current key rotation schedule is at least twice a year. This schedule can change without notice.
+* The current key rotation schedule is four times a year. This schedule can change without notice.
 * In case of an emergency, Okta can rotate keys as needed.
 * Okta always publishes keys to the JWKS.
-* If your app follows the best practice to always resolve the <em>kid</em>, key rotations will not cause problems.
+* If your app follows the best practice to always resolve the *kid*, key rotations won't cause problems.
 * If you download the key and store it locally, **you are responsible for updates**.
 
 >Keys used to sign tokens automatically rotate and should always be resolved dynamically against the published JWKS. Your app might break if you hardcode public keys in your applications! Be sure to include key rollover in your implementation.
@@ -377,10 +346,12 @@ All apps must roll over keys for adequate security. Please note the following:
 }
 ~~~
 
->Okta strongly recommends retrieving keys dynamically with the JWKS published in the discovery document. It is safe to cache or persist downloaded keys for performance. 
-However, if your application is pinned to a signing key, you must check the keys as Okta automatically rotates signing keys.
+>Okta strongly recommends retrieving keys dynamically with the JWKS published in the discovery document. 
+It is safe to cache or persist downloaded keys for performance. 
+However, if the client application is pinned to a signing key, it can't request the current signing key from cache or a persisted store,
+so when Okta rotates the  key, verification fails. Pinned client applications must periodically check the Okta signing key.
 
-There are standard open-source libraries available for every major language to perform [JWS](https://tools.ietf.org/html/rfc7515) signature validation.
+Standard open-source libraries are available for every major language to perform [JWS](https://tools.ietf.org/html/rfc7515) signature validation.
 
 ### Alternative Validation 
 
@@ -467,7 +438,7 @@ This API doesn't require any authentication and returns a JSON object with the f
 }
 ~~~
 
-See the OAuth 2.0 reference topic for more information about <em>authorization_endpoint</em> and <em>token_endpoint</em>:
+See the OAuth 2.0 reference topic for more information about *authorization_endpoint* and *token_endpoint*:
 
 * [/oauth2/v1/authorize](oauth2.html#authentication-request)
 * [/oauth2/v1/token](oauth2.html#token-request)
