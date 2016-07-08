@@ -21,7 +21,7 @@ is an SSO protocol for authenticating end-users and asserting their identity. Op
 
 ![OpenID Architecture Diagram](/assets/img/openID_overview.png)
 
-Okta is the identity provider (IP) responsible for verifying the identity of users and applications that exist in an organization’s directory, 
+Okta is the identity provider responsible for verifying the identity of users and applications that exist in an organization’s directory, 
 and ultimately issuing identity tokens upon successful authentication of those users and applications. 
 
 The basic authentication flow with Okta as your identity provider:
@@ -153,7 +153,7 @@ Claims in the header are always returned.
 | Property     | Description                                                                      | DataType     | Example                  |
 |--------------+---------+--------------------------------------------------------------------------------------------+--------------|--------------------------|
 | alg          | Identifies the digital signature algorithm used. This is always be RS256.      | String       | "RS256"                  |
-| kid          | Identifies the *public-key* used to sign the *id_token*. The corresponding *public-key* can be found as a part of the [well-known configuration's](#openid-connect-discovery-document) *jwks_uri* value.                                  | String       | "a5dfwef1a-0ead3f5223_w1e" |
+| kid          | Identifies the *public-key* used to verify the *id_token*. The corresponding *public-key* can be found as a part of the [well-known configuration's](#openid-connect-discovery-document) *jwks_uri* value.                                  | String       | "a5dfwef1a-0ead3f5223_w1e" |
 
 #### Claims in the payload section
 
