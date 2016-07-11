@@ -105,7 +105,7 @@ The ID Token (*id_token*) consists of three period-separated, base64URL-encoded 
 {
   "ver": 1,
   "sub": "00uid4BxXw6I6TV4m0g3",
-  "iss": "http://rain.okta1.com:1802",
+  "iss": "https://your-org.okta.com/as/0oakqf8baJw56szJi0g5",
   "aud": "uAaunofWkaDJxukCFeBx",
   "iat": 1449624026,
   "exp": 1449627626,
@@ -166,7 +166,7 @@ Claims in the payload are independent of scope (always returned) or dependent on
 |--------------+---------+----------+----------------------------------------------------------------------------------+--------------|--------------------------|
 | ver     | The semantic version of the ID Token.   |  Integer   |  1    |
 | jti     | A unique identifier for this ID Token for debugging and revocation purposes.   | String    |  "Tlenfse93dgkaksginv"  |
-| iss     | The Issuer Identifier of the response.    | String    | "https://your-org.okta.com"     |
+| iss     | The Issuer Identifier of the response. The ID is the Authorization Server instance for the private Resource Server.   | String    | "https://your-org.okta.com/as/0oakqf8baJw56szJi0g5"     |
 | sub     | The subject. A unique identifier for the user.   | String    | 	"00uk1u7AsAk6dZL3z0g3"     |
 | aud     | Identifies the audience that this ID Token is intended for. It must be one of the OAuth 2.0 client IDs of your application.   | String    | "6joRGIzNCaJfdCPzRjlh"     |
 | iat     | The time the ID Token was issued, represented in Unix time (seconds).   | Integer    | 1311280970     |
@@ -367,7 +367,7 @@ This API doesn't require any authentication and returns a JSON object with the f
 
 ~~~json
 {
-    "issuer": "https://${org}.okta.com",
+    "issuer": "https://${org}.okta.com/as/{id}",
     "authorization_endpoint": "https://${org}.okta.com/oauth2/v1/authorize",
     "token_endpoint": "https://${org}.okta.com/oauth2/v1/token",
     "userinfo_endpoint": "https://${org}.okta.com/oauth2/v1/userinfo",

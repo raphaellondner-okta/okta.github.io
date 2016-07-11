@@ -325,7 +325,7 @@ invalid_request         | The request structure was invalid. E.g. the basic auth
     "iat" : 1451602800,
     "sub" : "00uid4BxXw6I6TV4m0g3",
     "aud" : "ciSZgrA9ROeHkfPCaXsa",
-    "iss" : "http://rain.okta1.com:1802",
+    "iss" : "https://your-org.okta.com/as/0oakqf8baJw56szJi0g5",
     "jti" : "4eAWJOCMB3SX8XewDfVR"
 }
 ~~~
