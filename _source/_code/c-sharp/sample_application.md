@@ -1,6 +1,7 @@
 ---
 layout: docs_page
 title: .NET Sample Application
+redirect_from: "/docs/examples/dotnet_sample_application.html"
 ---
 
 > <i class="fa fa-github"></i> [Visit the GitHub repository for the "Okta Music Store" .NET Sample Application.](https://github.com/okta/okta-music-store)
