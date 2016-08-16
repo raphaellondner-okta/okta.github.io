@@ -13,7 +13,21 @@
         <h2 class="Sidebar-location Sidebar-toggle h6">HTTP Verbs</h3>
            <div class="Sidebar-close Sidebar-toggle"></div>
 	   <div>
-	     <!-- <h3 class="Sidebar-title">Reference</h3> -->
+	     <h3 class="Sidebar-title">Use Cases</h3>
+	     <ul class="Sidebar-nav">
+	       {% assign elements = site.use_cases %}
+	       {% for element in elements %}
+	       <li{% if element.title == page.title%} class="is-active"{% endif %}><a href="{{ element.url }}">{{ element.title }}</a></li>
+	       {% endfor %}
+	       <!-- <li class="is-active"> -->
+	       <!-- 	 <a href="#">Working with the Okta API</a> -->
+	       <!-- 	 <ul> -->
+	       <!-- 	   <li><a href="#">Versioning</a></li> -->
+	       <!-- 	   <li class="is-active"><a href="#">HTTP Verbs</a></li> -->
+	       <!-- 	 </ul> -->
+	       <!-- </li> -->
+	     </ul>
+	     <h3 class="Sidebar-title">Reference</h3>
 	     <ul class="Sidebar-nav">
 	       {% assign elements = site.reference %}
 	       {% for element in elements %}
@@ -27,16 +41,20 @@
 	       <!-- 	 </ul> -->
 	       <!-- </li> -->
 	     </ul>
-	     <!-- <h3 class="Sidebar-title">Use Cases</h3> -->
-	     <!-- <ul class="Sidebar-nav"> -->
-	     <!--   <li><a href="#">Authentication</a></li> -->
-	     <!--   <li><a href="#">API Security</a></li> -->
-	     <!--   <li><a href="#">Multi-Factor Authentication</a></li> -->
-	     <!--   <li><a href="#">Mobile Development</a></li> -->
-	     <!--   <li><a href="#">Web Development</a></li> -->
-	     <!--   <li><a href="#">Federated SSO &amp; Provisioning</a></li> -->
-	     <!--   <li><a href="#">Users, Groups, & Applications</a></li> -->
-	     <!-- </ul> -->
+	     <h3 class="Sidebar-title">Standards</h3>
+	     <ul class="Sidebar-nav">
+	       {% assign elements = site.standards %}
+	       {% for element in elements %}
+	       <li{% if element.title == page.title%} class="is-active"{% endif %}><a href="{{ element.url }}">{{ element.title }}</a></li>
+	       {% endfor %}
+	       <!-- <li class="is-active"> -->
+	       <!-- 	 <a href="#">Working with the Okta API</a> -->
+	       <!-- 	 <ul> -->
+	       <!-- 	   <li><a href="#">Versioning</a></li> -->
+	       <!-- 	   <li class="is-active"><a href="#">HTTP Verbs</a></li> -->
+	       <!-- 	 </ul> -->
+	       <!-- </li> -->
+	     </ul>
 	   </div>
         </aside>
       <!-- END Fixed sidebar -->
@@ -60,6 +78,6 @@
         src="https://code.jquery.com/jquery-3.1.0.min.js"
         integrity="sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s="
         crossorigin="anonymous"></script>
-<script src="/assets/js/master.js"></script>
+<script src="/js/master.js"></script>
 </body>
 </html>
