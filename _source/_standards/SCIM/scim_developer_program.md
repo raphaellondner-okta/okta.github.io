@@ -1,7 +1,9 @@
 ---
-layout: docs_page
 title: SCIM Provisioning Developer Program
 excerpt: Develop SCIM provisioning with Okta
+redirect_from:
+    - "/docs/guides/scim_developer_program"
+    - "/docs/guides/scim_developer_program.html"
 ---
 
 Increasingly, businesses expect their cloud application providers to support advanced provisioning features 

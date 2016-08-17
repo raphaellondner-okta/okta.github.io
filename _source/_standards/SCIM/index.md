@@ -1,8 +1,8 @@
 ---
-layout: docs_page
 title: SCIM
-excerpt: Learn how to enable SCIM based provisioning from Okta to your application.
 icon: /assets/img/icons/scim.svg
+permalink: /standards/SCIM/
+excerpt: Learn how to enable SCIM based provisioning from Okta to your application.
 redirect_from: "/docs/guides/scim_guidance.html"
 ---
 # Welcome to the Okta SCIM Beta
