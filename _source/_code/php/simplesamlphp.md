@@ -1,6 +1,7 @@
 ---
-layout: docs_page
-title: SimpleSAMLphp (PHP)
+layout: software
+title: SimpleSAMLphp
+excerpt: How to use SimpleSAMLphp to add support for Okta via SAML
 support_email: developers@okta.com
 ---
 
