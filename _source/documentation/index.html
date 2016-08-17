@@ -59,6 +59,9 @@ layout: default
     <div class="Row">
       {% assign standards = site.standards | sort: 'order' %}
       {% for standard in standards %}
+      {% unless standard.id contains '/index' %}
+      {% continue %}
+      {% endunless %}
       <div class="Column--4 Column--small-12">
 	<h3 class="h4">
 	  <a href="{{ standard.url }}">

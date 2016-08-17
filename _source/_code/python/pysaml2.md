@@ -9,7 +9,7 @@ framework_url: http://flask.pocoo.org/
 port: 5000
 saml_library: PySAML2
 saml_library_url: https://github.com/rohe/pysaml2
-github_url: git@github.com:jpf/okta-pysaml2-example.git
+git_url: git@github.com:jpf/okta-pysaml2-example.git
 github_repo_name: okta-pysaml2-example
 redirect_from: "/docs/examples/pysaml2.html"
 ---
@@ -42,7 +42,7 @@ Before you can configure your application and {{ page.saml_library }} set up an
 Okta "[chiclet](https://support.okta.com/articles/Knowledge_Article/27838096-Okta-Terminology)" (application icon) that enables an Okta user to sign in to your to your application with SAML and {{ page.saml_library }}.
 
 To set up Okta to connect to your application, follow the
-[setting up a SAML application in Okta](../guides/setting_up_a_saml_application_in_okta.html)
+[setting up a SAML application in Okta](/docs/guides/setting_up_a_saml_application_in_okta.html)
 guide. As noted in the instructions, there are two steps to change:
 
 * *In step \#6*: Use ***{{ page.chiclet_name }}*** instead of ***Example SAML application*** .
@@ -88,7 +88,7 @@ the following steps, you will have a working example of connecting Okta to a sam
 1.  Download the example application for {{ page.programming_language }}:
 
     ~~~ shell
-    $ git clone {{ page.github_url }}
+    $ git clone {{ page.git_url }}
     ~~~
 
 2.  `cd` to the `{{ page.github_repo_name }}` directory.
@@ -113,7 +113,7 @@ the following steps, you will have a working example of connecting Okta to a sam
 
 5.  Be sure to replace the contents of `${metdata_url}` with the link
     that you copied in step \#10 of the
-    "[Setting up a SAML application in Okta](../guides/setting_up_a_saml_application_in_okta.html)"
+    "[Setting up a SAML application in Okta](/docs/guides/setting_up_a_saml_application_in_okta.html)"
     instructions that you followed above!
 
     Note: The contents of `${metadata_url}` should look similar to: `https://example.oktapreview.com/app/a0b1c2deFGHIJKLMNOPQ/sso/saml/metadata`
