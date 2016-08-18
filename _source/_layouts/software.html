@@ -70,7 +70,7 @@
 	{% assign item = index %}
 	<div class="Column--4 Column--small-12">
 	  {% unless item.github_url %}
-	  <a href="{{ item.url }}">
+	  <a href="{{ item.url | remove: '/index' }}">
           {% endunless %}
 	    <h3 class="h4">{{ item.title }}</h3>
 	  {% unless item.github_url %}

@@ -17,7 +17,7 @@
 	     <ul class="Sidebar-nav">
 	       {% assign elements = site.use_cases %}
 	       {% for element in elements %}
-	       <li{% if element.title == page.title%} class="is-active"{% endif %}><a href="{{ element.url }}">{{ element.title }}</a></li>
+	       <li{% if element.title == page.title%} class="is-active"{% endif %}><a href="{{ element.url | remove: '/index' }}">{{ element.title }}</a></li>
 	       {% endfor %}
 	       <!-- <li class="is-active"> -->
 	       <!-- 	 <a href="#">Working with the Okta API</a> -->
@@ -31,7 +31,7 @@
 	     <ul class="Sidebar-nav">
 	       {% assign elements = site.reference %}
 	       {% for element in elements %}
-	       <li{% if element.title == page.title%} class="is-active"{% endif %}><a href="{{ element.url }}">{{ element.title }}</a></li>
+	       <li{% if element.title == page.title%} class="is-active"{% endif %}><a href="{{ element.url | remove: '/index' }}">{{ element.title }}</a></li>
 	       {% endfor %}
 	       <!-- <li class="is-active"> -->
 	       <!-- 	 <a href="#">Working with the Okta API</a> -->
@@ -48,7 +48,7 @@
 	       {% unless element.id contains '/index' %}
                  {% continue %}
 	       {% endunless %}
-	       <li{% if element.title == page.title%} class="is-active"{% endif %}><a href="{{ element.url }}">{{ element.title }}</a></li>
+	       <li{% if element.title == page.title%} class="is-active"{% endif %}><a href="{{ element.url | remove: '/index' }}">{{ element.title }}</a></li>
 	       {% endfor %}
 	       <!-- <li class="is-active"> -->
 	       <!-- 	 <a href="#">Working with the Okta API</a> -->
