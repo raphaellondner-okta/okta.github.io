@@ -1,7 +1,10 @@
 ---
 layout: docs_page
 title: Okta Expression Language
-redirect_from: "/docs/getting_started/okta_expression_lang.html"
+excerpt: The features and syntax of Okta's Expression Language which can be used throughout the Okta Admin Console and API.
+redirect_from:
+    - "/docs/getting_started/okta_expression_lang.html"
+    - "/docs/api/getting_started/okta_expression_lang.html"
 ---
 
 ## Overview
