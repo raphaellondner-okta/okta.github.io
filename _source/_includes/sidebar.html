@@ -1,0 +1,58 @@
+      <aside class="Sidebar">
+        <h2 class="Sidebar-location Sidebar-toggle h6">HTTP Verbs</h3>
+           <div class="Sidebar-close Sidebar-toggle"></div>
+	   <div>
+	     <h3 class="Sidebar-title">Use Cases</h3>
+	     <ul class="Sidebar-nav">
+	       {% assign documents = site.use_cases %}
+	       {% for document in documents %}
+	       {% unless document.id contains '/index' %}
+                 {% continue %}
+	       {% endunless %}
+	       <li{% if document.title == page.title%} class="is-active"{% endif %}><a href="{{ document.url | remove: '/index' }}">{{ document.title }}</a></li>
+	       {% endfor %}
+	       <!-- <li class="is-active"> -->
+	       <!-- 	 <a href="#">Working with the Okta API</a> -->
+	       <!-- 	 <ul> -->
+	       <!-- 	   <li><a href="#">Versioning</a></li> -->
+	       <!-- 	   <li class="is-active"><a href="#">HTTP Verbs</a></li> -->
+	       <!-- 	 </ul> -->
+	       <!-- </li> -->
+	     </ul>
+	     <h3 class="Sidebar-title">Reference</h3>
+	     <ul class="Sidebar-nav">
+	       {% assign documents = site.reference %}
+	       {% for document in documents %}
+	       <li{% if document.title == page.title%} class="is-active"{% endif %}>
+		 <a href="{% if document.id contains '/index' %}{{ document.url | remove: '/index' }}{% else %}{{ document.link }}{% endif %}">
+		   {{ document.title }}
+		 </a>
+	       </li>
+	       {% endfor %}
+	       <!-- <li class="is-active"> -->
+	       <!-- 	 <a href="#">Working with the Okta API</a> -->
+	       <!-- 	 <ul> -->
+	       <!-- 	   <li><a href="#">Versioning</a></li> -->
+	       <!-- 	   <li class="is-active"><a href="#">HTTP Verbs</a></li> -->
+	       <!-- 	 </ul> -->
+	       <!-- </li> -->
+	     </ul>
+	     <h3 class="Sidebar-title">Standards</h3>
+	     <ul class="Sidebar-nav">
+	       {% assign elements = site.standards %}
+	       {% for element in elements %}
+	       {% unless element.id contains '/index' %}
+                 {% continue %}
+	       {% endunless %}
+	       <li{% if element.title == page.title%} class="is-active"{% endif %}><a href="{{ element.url | remove: '/index' }}">{{ element.title }}</a></li>
+	       {% endfor %}
+	       <!-- <li class="is-active"> -->
+	       <!-- 	 <a href="#">Working with the Okta API</a> -->
+	       <!-- 	 <ul> -->
+	       <!-- 	   <li><a href="#">Versioning</a></li> -->
+	       <!-- 	   <li class="is-active"><a href="#">HTTP Verbs</a></li> -->
+	       <!-- 	 </ul> -->
+	       <!-- </li> -->
+	     </ul>
+	   </div>
+        </aside>
