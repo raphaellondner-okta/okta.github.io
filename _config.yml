@@ -59,6 +59,9 @@ collections:
     output: true
   3rd_party_notices:
     output: true
+  docs:
+    output: true
+    permalink: /:collection/:path:output_ext
 
 defaults:
   -
