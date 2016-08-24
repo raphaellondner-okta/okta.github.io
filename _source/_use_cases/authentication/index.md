@@ -1,4 +1,4 @@
 ---
 title: Authentication
+excerpt: Overview of the various ways Okta can be used to authenticate users depending on your needs.
 ---
-Overview of the different ways you can use to authenticate users
