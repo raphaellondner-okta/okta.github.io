@@ -193,7 +193,7 @@ Protocol settings for the [SAML 2.0 Authentication Request Protocol](http://docs
 | type        | SAML 2.0 protocol                                                  | `SAML2`                                                           | FALSE    | TRUE     |           |           |            |
 | endpoints   | SAML 2.0 HTTP binding settings for IdP and SP (Okta)               | [SAML 2.0 Endpoints Object](#saml-20-endpoints-object)            | FALSE    | FALSE    |           |           |            |
 | algorithms  | Settings for signing and verifying SAML messages                   | [SAML 2.0 Algorithms Object](#saml-20-algorithms-object)          | FALSE    | FALSE    |           |           |            |
-| credentials | Federation trust credentials for verifying assertions from the IdP | [SAML 2.0 Credentials Object](#saml-20-trust-credentials-object)  | FALSE    | FALSE    |           |           |            |
+| credentials | Federation trust credentials for verifying assertions from the IdP | [SAML 2.0 Credentials Object](#saml-20-credentials-object)        | FALSE    | FALSE    |           |           |            |
 | settings    | Advanced settings for the SAML 2.0 protocol                        | [SAML 2.0 Settings Object](#saml-20-settings-object)              | TRUE     | FALSE    |           |           |            |
 |-------------+--------------------------------------------------------------------+-------------------------------------------------------------------+----------+----------+-----------+-----------+------------|
 
@@ -450,6 +450,17 @@ XML digital signature algorithm settings for verifying `<SAMLResponse>` messages
 | scope       | Specifies whether to verify a `<SAMLResponse>` message or `<Assertion>` element XML digital signature                  | `RESPONSE`, `ASSERTION`, `ANY` | FALSE    | FALSE    |           |           |            |
 |-------------+------------------------------------------------------------------------------------------------------------------------+--------------------------------+----------+----------+-----------+-----------+------------|
 
+###### SAML 2.0 Credentials Object
+
+Federation trust credentials for verifying assertions from the IdP and signing requests to the IdP
+
+|---------+--------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------+----------+----------+-----------+-----------+-------------|
+| Property | Description                                                                                           | DataType                                                                   | Nullable | Readonly | MinLength | MaxLength | Validation  |
+| -------- | ----------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- | -------- | -------- | --------- | --------- | ----------- |
+| trust    | Object containing information for verifying assertions from the IdP                                   | [SAML 2.0 Trust Credentials Object](#saml-20-trust-credentials-object)     | FALSE    | FALSE    |           |           |             |
+| signing  | Key used for signing requests to the IdP                                                              | [SAML 2.0 Signing Credentials Object](#saml-20-signing-credentials-object) | TRUE     | FALSE    |           |           |             |
+|----------+-------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------+----------+----------+-----------+-----------+-------------|
+
 ###### SAML 2.0 Trust Credentials Object
 
 Federation trust credentials for verifying assertions from the IdP:
@@ -470,6 +481,31 @@ Federation trust credentials for verifying assertions from the IdP:
       "trust": {
         "issuer": "urn:example:idp",
         "audience": "https://www.okta.com/saml2/service-provider/spgv32vOnpdyeGSaiUpL",
+        "kid": "your-key-id"
+      }
+    }
+  }
+}
+~~~
+
+###### SAML 2.0 Signing Credentials Object
+
+Determines the [IdP Key Credential](#identity-provider-key-credential-model) used to sign requests sent to the IdP.
+
+> You must enable the key rollover feature to perform [Signing Key Operations](#identity-provider-signing-key-store-operations). Key rollover is an Early Access feature; contact Customer Support to enable it.
+
+|---------+----------------------------------------------------------------------------------------------------------------+----------+----------+----------+-----------+-----------+--------------------------------------------|
+| Property | Description                                                                                                   | DataType | Nullable | Readonly | MinLength | MaxLength | Validation                                 |
+| -------- | ------------------------------------------------------------------------------------------------------------- | -------- | -------- | -------- | --------- | --------- | ------------------------------------------ |
+| kid      | [IdP Key Credential](#identity-provider-key-credential-model) reference to Okta's X.509 signature certificate | String   | FALSE    | FALSE    |           |           | Valid Signing Key ID reference             |
+|----------+---------------------------------------------------------------------------------------------------------------+----------+----------+----------+-----------+-----------+--------------------------------------------|
+
+~~~json
+{
+  "protocol": {
+    "type": "SAML2",
+    "credentials": {
+      "signing": {
         "kid": "your-key-id"
       }
     }
@@ -1368,6 +1404,8 @@ IdP credential keys have the following properties:
 | e                | the exponent value for the RSA public key                                      | String                                                                      | FALSE    | TRUE   | TRUE     |           |           |            |
 | n                | the modulus value for the RSA public key                                       | String                                                                      | FALSE    | TRUE   | TRUE     |           |           |            |
 |------------------+--------------------------------------------------------------------------------+-----------------------------------------------------------------------------|----------|--------|----------|-----------|-----------+------------|
+
+> Note that IdP signing keys are read-only
 
 ## Identity Provider User Model
 
@@ -4070,4 +4108,195 @@ curl -v -X DELETE \
 
 ~~~http
 HTTP/1.1 204 No Content
+~~~
+
+## Identity Provider Signing Key Store Operations
+
+> You must enable the key rollover feature to perform the following operations. Key rollover is an Early Access feature; contact Customer Support to enable it.
+
+> EA feature constraint: Okta currently uses the same key for both request signing and decrypting SAML Assertions that have been encrypted by the IdP. Changing your signing key will also change your decryption key.
+
+### Generate New IdP Signing Key Credential
+{:.api .api-operation}
+
+<span class="api-uri-template api-uri-post"><span class="api-label">POST</span> /idps/*:id*/credentials/keys/generate</span>
+
+Generates a new X.509 certificate for an IdP signing key credential to be used for signing assertions sent to the IdP
+
+> To update an IdP with the newly generated key credential, [update your IdP](#update-identity-provider) using the returned key's `kid` in the [signing credential](#saml-20-signing-credentials-object).
+
+##### Request Parameters
+{:.api .api-request .api-request-params}
+
+Parameter     | Description                                                                 | Param Type | DataType                                      | Required | Default
+------------- | --------------------------------------------------------------------------- | ---------- | --------------------------------------------- | -------- | -------
+id            | `id` of the IdP                                                             | URL        | String                                        | TRUE     |
+validityYears | expiry of the [IdP Key Credential](#identity-provider-key-credential-model) | Query      | Number                                        | TRUE     |
+
+##### Response Parameters
+{:.api .api-response .api-response-params}
+
+Return the generated [IdP Key Credential](#identity-provider-key-credential-model).
+
+##### Request Example
+{:.api .api-request .api-request-example}
+
+~~~sh
+curl -v -X POST \
+-H "Accept: application/json" \
+-H "Content-Type: application/json" \
+-H "Authorization: SSWS ${api_token}" \
+-d '{
+}' "https://${org}.okta.com/api/v1/idps/0oad5lTSBOMUBOBVVQSC/credentials/keys/generate?validityYears=2"
+~~~
+
+##### Response Example
+{:.api .api-response .api-response-example}
+
+~~~http
+HTTP/1.1 201 Created
+Content-Type: application/json
+Location: https://${org}.okta.com/api/v1/idps/0oad5lTSBOMUBOBVVQSC/credentials/keys/akm5hvbbevE341ovl0h7
+
+{
+  "created": "2015-12-10T18:56:23.000Z",
+  "expiresAt": "2017-12-10T18:56:22.000Z",
+  "x5c": [
+    "MIIDqDCCApCgAwIBAgIGAVGNQFX5MA0GCSqGSIb3DQEBBQUAMIGUMQswCQYDVQQGEwJVUzETMBEGA1UECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNU2FuIEZyYW5jaXNjbzENMAsGA1UECgwET2t0YTEUMBIGA1UECwwLU1NPUHJvdmlkZXIxFTATBgNVBAMMDGJhbGFjb21wdGVzdDEcMBoGCSqGSIb3DQEJARYNaW5mb0Bva3RhLmNvbTAeFw0xNTEyMTAxODU1MjJaFw0xNzEyMTAxODU2MjJaMIGUMQswCQYDVQQGEwJVUzETMBEGA1UECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNU2FuIEZyYW5jaXNjbzENMAsGA1UECgwET2t0YTEUMBIGA1UECwwLU1NPUHJvdmlkZXIxFTATBgNVBAMMDGJhbGFjb21wdGVzdDEcMBoGCSqGSIb3DQEJARYNaW5mb0Bva3RhLmNvbTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAJJjrcnI6cXBiXNq9YDgfYrQe2O5qEHG4MXP8Ue0sMeefFkFEHYHnHUeZCq6WTAGqR+1LFgOl+Eq9We5V+qNlGIfkFkQ3iHGBrIALKqLCd0Et76HicDiegz7j9DtN+lo0hG/gfcw5783L5g5xeQ7zVmCQMkFwoUA0uA3bsfUSrmfORHJL+EMNQT8XIXD8NkG4g6u7ylHVRTLgXbe+W/p04m3EP6l41xl+MhIpBaPxDsyUvcKCNwkZN3aZIin1O9Y4YJuDHxrM64/VtLLp0sC05iawAmfsLunF7rdJAkWUpPn+xkviyNQ3UpvwAYuDr+jKLUdh2reRnm1PezxMIXzBVMCAwEAATANBgkqhkiG9w0BAQUFAAOCAQEARnFIjyitrCGbleFr3KeAwdOyeHiRmgeKupX5ZopgXtcseJoToUIinX5DVw2fVZPahqs0Q7/a0wcVnTRpw6946qZCwKd/PvZ1feVuVEA5Ui3+XvHuSH5xLp7NvYG1snNEvlbN3+NDUMlWj2NEbihowUBt9+UxTpQO3+N08q3aZk3hOZ+tHt+1Te7KEEL/4CM28GZ9MY7fSrS7MAgp1+ZXtn+kRlMrXnQ49qBda37brwDRqmSY9PwNMbev3r+9ZHwxr9W5wXW4Ev4C4xngA7RkVoyDbItSUho0I0M0u/LHuppclnXrw97xyO5Z883eIBvPVjfRcxsJxXJ8jx70ATDskw=="
+  ],
+  "kid": "akm5hvbbevE341ovl0h7",
+  "kty": "RSA",
+  "use": "sig",
+  "x5t#S256": "5GOpy9CQVtfvBmu2T8BHvpKE4OGtC3BuS046t7p9pps"
+}
+~~~
+
+If validityYears is out of range (2 - 10 years), you will receive an error response.
+
+~~~http
+HTTP/1.1 400 Bad Request
+Content-Type: application/json
+
+{
+  "errorCode": "E0000001",
+  "errorSummary": "Api validation failed: generateKey",
+  "errorLink": "E0000001",
+  "errorId": "oaeMHrsk2WLTACvPU5T7yQ4yw",
+  "errorCauses": [
+    {
+      "errorSummary": "Validity years out of range. It should be 2 - 10 years"
+    }
+  ]
+}
+~~~
+
+### List Signing Key Credentials for IdP
+{:.api .api-operation}
+
+<span class="api-uri-template api-uri-get"><span class="api-label">GET</span> /idps/*:id*/credentials/keys</span>
+
+Enumerates signing key credentials for an IdP
+
+##### Request Parameters
+{:.api .api-request .api-request-params}
+
+Parameter     | Description        | Param Type | DataType                                      | Required | Default
+------------- | ------------------ | ---------- | --------------------------------------------- | -------- | -------
+id            | `id` of the IdP    | URL        | String                                        | TRUE     |
+
+##### Response Parameters
+{:.api .api-response .api-response-params}
+
+Array of [IdP Key Credential](#identity-provider-key-credential-model).
+
+##### Request Example
+{:.api .api-request .api-request-example}
+
+~~~sh
+curl -v -X GET \
+-H "Accept: application/json" \
+-H "Content-Type: application/json" \
+-H "Authorization: SSWS ${api_token}" \
+-d '{
+}' "https://${org}.okta.com/api/v1/idps/0oad5lTSBOMUBOBVVQSC/credentials/keys"
+~~~
+
+##### Response Example
+{:.api .api-response .api-response-example}
+
+~~~json
+[
+  {
+    "created": "2015-12-10T18:56:23.000Z",
+    "expiresAt": "2017-12-10T18:56:22.000Z",
+    "x5c": [
+      "MIIDqDCCApCgAwIBAgIGAVGNQFX5MA0GCSqGSIb3DQEBBQUAMIGUMQswCQYDVQQGEwJVUzETMBEGA1UECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNU2FuIEZyYW5jaXNjbzENMAsGA1UECgwET2t0YTEUMBIGA1UECwwLU1NPUHJvdmlkZXIxFTATBgNVBAMMDGJhbGFjb21wdGVzdDEcMBoGCSqGSIb3DQEJARYNaW5mb0Bva3RhLmNvbTAeFw0xNTEyMTAxODU1MjJaFw0xNzEyMTAxODU2MjJaMIGUMQswCQYDVQQGEwJVUzETMBEGA1UECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNU2FuIEZyYW5jaXNjbzENMAsGA1UECgwET2t0YTEUMBIGA1UECwwLU1NPUHJvdmlkZXIxFTATBgNVBAMMDGJhbGFjb21wdGVzdDEcMBoGCSqGSIb3DQEJARYNaW5mb0Bva3RhLmNvbTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAJJjrcnI6cXBiXNq9YDgfYrQe2O5qEHG4MXP8Ue0sMeefFkFEHYHnHUeZCq6WTAGqR+1LFgOl+Eq9We5V+qNlGIfkFkQ3iHGBrIALKqLCd0Et76HicDiegz7j9DtN+lo0hG/gfcw5783L5g5xeQ7zVmCQMkFwoUA0uA3bsfUSrmfORHJL+EMNQT8XIXD8NkG4g6u7ylHVRTLgXbe+W/p04m3EP6l41xl+MhIpBaPxDsyUvcKCNwkZN3aZIin1O9Y4YJuDHxrM64/VtLLp0sC05iawAmfsLunF7rdJAkWUpPn+xkviyNQ3UpvwAYuDr+jKLUdh2reRnm1PezxMIXzBVMCAwEAATANBgkqhkiG9w0BAQUFAAOCAQEARnFIjyitrCGbleFr3KeAwdOyeHiRmgeKupX5ZopgXtcseJoToUIinX5DVw2fVZPahqs0Q7/a0wcVnTRpw6946qZCwKd/PvZ1feVuVEA5Ui3+XvHuSH5xLp7NvYG1snNEvlbN3+NDUMlWj2NEbihowUBt9+UxTpQO3+N08q3aZk3hOZ+tHt+1Te7KEEL/4CM28GZ9MY7fSrS7MAgp1+ZXtn+kRlMrXnQ49qBda37brwDRqmSY9PwNMbev3r+9ZHwxr9W5wXW4Ev4C4xngA7RkVoyDbItSUho0I0M0u/LHuppclnXrw97xyO5Z883eIBvPVjfRcxsJxXJ8jx70ATDskw=="
+    ],
+    "kid": "akm5hvbbevE341ovl0h7",
+    "kty": "RSA",
+    "use": "sig",
+    "x5t#S256": "5GOpy9CQVtfvBmu2T8BHvpKE4OGtC3BuS046t7p9pps"
+  },
+  {
+    "created": "2015-12-10T18:55:35.000Z",
+    "expiresAt": "2045-01-23T02:15:23.000Z",
+    "x5c": [
+      "MIIDqDCCApCgAwIBAgIGAUsUkouzMA0GCSqGSIb3DQEBBQUAMIGUMQswCQYDVQQGEwJVUzETMBEGA1UECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNU2FuIEZyYW5jaXNjbzENMAsGA1UECgwET2t0YTEUMBIGA1UECwwLU1NPUHJvdmlkZXIxFTATBgNVBAMMDGJhbGFjb21wdGVzdDEcMBoGCSqGSIb3DQEJARYNaW5mb0Bva3RhLmNvbTAeFw0xNTAxMjMwMjE0MjNaFw00NTAxMjMwMjE1MjNaMIGUMQswCQYDVQQGEwJVUzETMBEGA1UECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNU2FuIEZyYW5jaXNjbzENMAsGA1UECgwET2t0YTEUMBIGA1UECwwLU1NPUHJvdmlkZXIxFTATBgNVBAMMDGJhbGFjb21wdGVzdDEcMBoGCSqGSIb3DQEJARYNaW5mb0Bva3RhLmNvbTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAKhmkmKsu3FYeBiJg44aN6Ah3g9gof1cytXJVMnblDUWpLfe/FMUQCssh8Y8NCYRri5jni4efBgk6B3SkC7ymqsOXILIEHSwUYWnAaqDOTxO101mHzryowu1+0PldRNoyTthahpprvAPYlTin9zrDTqFT+WY/zwoaN8H+CfixlW1nM85qF18zYYekkW50MSoHPcfJKe2ywIhPXTYTSBEPcHh8dQEjBrZn7A4qOoDnfOXll8OL7j2O6EVyTtHA0tLJHVLpwI4gSPsXFwEnHltjN57odwYe9yds0BbM/YG9i+am1+3cmZ6Uyd16mLGclrr05o9BHcEZ4ZctV2hr6whbRsCAwEAATANBgkqhkiG9w0BAQUFAAOCAQEAnNlF27gRmhGTQ+GRAvbvYToFRgsIbBAPvRqB2LmEIiQ6UJd602w6uP1sv/zEzBYg4SnMLuVyWgOJ6d71dCvXdIO9mgAq6BaEPjlo0WhGyt+zGrpkMnIX5EwRa64kHydcPRHNA607wVYA96sJdyNJEMzBvjY9fJnfevzzDCN3NWpMS2T6rk6HP5IziI1VuFWY2OUC1kbCqLj1dUgp8koe3ftLL55ZpkAocnVMnrzBveNjgAOAiKTMcyS0bhESph9aVWvuHVZSfTnUjnTPb/4jA2YlB3ED+qaU3aqHwft1KXwZskNXBKXy7lyC+CMoeB3/ncFhSg/UllBooPPS3wYlNA=="
+    ],
+    "kid": "akm5hvbn1vojA9Fsa0h7",
+    "kty": "RSA",
+    "use": "sig",
+    "x5t#S256": "7CCyXWwKzH4P6PoBP91B1S_iIZVzuGffVnUXu-BTYQQ"
+  }
+]
+~~~
+
+
+### Get Signing Key Credential for IdP
+{:.api .api-operation}
+
+<span class="api-uri-template api-uri-get"><span class="api-label">GET</span> /idps/*:id*/credentials/keys/*:kid*</span>
+
+Gets a specific [IdP Key Credential](#identity-provider-key-credential-model) by `kid`
+
+##### Request Parameters
+{:.api .api-request .api-request-params}
+
+Parameter     | Description                                                                     | Param Type | DataType                                      | Required | Default
+------------- | ------------------------------------------------------------------------------- | ---------- | --------------------------------------------- | -------- | -------
+id            | `id` of the IdP                                                                 | URL        | String                                        | TRUE     |
+kid           | unique key of [IdP Key Credential](#identity-provider-key-credential-model)     | URL        | String                                        | TRUE     |
+
+##### Response Parameters
+{:.api .api-response .api-response-params}
+
+[IdP Key Credential](#identity-provider-key-credential-model).
+
+##### Request Example
+{:.api .api-request .api-request-example}
+
+~~~sh
+curl -v -X GET \
+-H "Accept: application/json" \
+-H "Content-Type: application/json" \
+-H "Authorization: SSWS ${api_token}" \
+-d '{
+}' "https://${org}.okta.com/api/v1/idps/0oad5lTSBOMUBOBVVQSC/credentials/keys/akm5hvbbevE341ovl0h7"
+~~~
+
+##### Response Example
+{:.api .api-response .api-response-example}
+
+~~~json
+{
+  "created": "2015-12-10T18:56:23.000Z",
+  "expiresAt": "2017-12-10T18:56:22.000Z",
+  "x5c": [
+    "MIIDqDCCApCgAwIBAgIGAVGNQFX5MA0GCSqGSIb3DQEBBQUAMIGUMQswCQYDVQQGEwJVUzETMBEGA1UECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNU2FuIEZyYW5jaXNjbzENMAsGA1UECgwET2t0YTEUMBIGA1UECwwLU1NPUHJvdmlkZXIxFTATBgNVBAMMDGJhbGFjb21wdGVzdDEcMBoGCSqGSIb3DQEJARYNaW5mb0Bva3RhLmNvbTAeFw0xNTEyMTAxODU1MjJaFw0xNzEyMTAxODU2MjJaMIGUMQswCQYDVQQGEwJVUzETMBEGA1UECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNU2FuIEZyYW5jaXNjbzENMAsGA1UECgwET2t0YTEUMBIGA1UECwwLU1NPUHJvdmlkZXIxFTATBgNVBAMMDGJhbGFjb21wdGVzdDEcMBoGCSqGSIb3DQEJARYNaW5mb0Bva3RhLmNvbTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAJJjrcnI6cXBiXNq9YDgfYrQe2O5qEHG4MXP8Ue0sMeefFkFEHYHnHUeZCq6WTAGqR+1LFgOl+Eq9We5V+qNlGIfkFkQ3iHGBrIALKqLCd0Et76HicDiegz7j9DtN+lo0hG/gfcw5783L5g5xeQ7zVmCQMkFwoUA0uA3bsfUSrmfORHJL+EMNQT8XIXD8NkG4g6u7ylHVRTLgXbe+W/p04m3EP6l41xl+MhIpBaPxDsyUvcKCNwkZN3aZIin1O9Y4YJuDHxrM64/VtLLp0sC05iawAmfsLunF7rdJAkWUpPn+xkviyNQ3UpvwAYuDr+jKLUdh2reRnm1PezxMIXzBVMCAwEAATANBgkqhkiG9w0BAQUFAAOCAQEARnFIjyitrCGbleFr3KeAwdOyeHiRmgeKupX5ZopgXtcseJoToUIinX5DVw2fVZPahqs0Q7/a0wcVnTRpw6946qZCwKd/PvZ1feVuVEA5Ui3+XvHuSH5xLp7NvYG1snNEvlbN3+NDUMlWj2NEbihowUBt9+UxTpQO3+N08q3aZk3hOZ+tHt+1Te7KEEL/4CM28GZ9MY7fSrS7MAgp1+ZXtn+kRlMrXnQ49qBda37brwDRqmSY9PwNMbev3r+9ZHwxr9W5wXW4Ev4C4xngA7RkVoyDbItSUho0I0M0u/LHuppclnXrw97xyO5Z883eIBvPVjfRcxsJxXJ8jx70ATDskw=="
+  ],
+  "kid": "akm5hvbbevE341ovl0h7",
+  "kty": "RSA",
+  "use": "sig",
+  "x5t#S256": "5GOpy9CQVtfvBmu2T8BHvpKE4OGtC3BuS046t7p9pps"
+}
 ~~~
