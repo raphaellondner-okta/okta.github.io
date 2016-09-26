@@ -1839,6 +1839,7 @@ Enumerates apps added to your organization with pagination. A subset of apps can
 - [List Applications with Defaults](#list-applications-with-defaults)
 - [List Applications Assigned to User](#list-applications-assigned-to-user)
 - [List Applications Assigned to Group](#list-applications-assigned-to-group)
+- [List Applications Using a Key](#list-applications-using-a-key)
 
 ##### Request Parameters
 {:.api .api-request .api-request-params}
@@ -1846,7 +1847,7 @@ Enumerates apps added to your organization with pagination. A subset of apps can
 Parameter | Description                                                                                                      | Param Type | DataType | Required | Default
 --------- | ---------------------------------------------------------------------------------------------------------------- | ---------- | -------- | -------- | -------
 limit     | Specifies the number of results for a page                                                                       | Query      | Number   | FALSE    | 20
-filter    | Filters apps by `status`, `user.id`, or `group.id` expression                                                    | Query      | String   | FALSE    |
+filter    | Filters apps by `status`, `user.id`, `group.id` or `credentials.signing.kid` expression                                                    | Query      | String   | FALSE    |
 after     | Specifies the pagination cursor for the next page of apps                                                        | Query      | String   | FALSE    |
 expand    | Traverses `users` link relationship and optionally embeds [Application User](#application-user-model) resource   | Query      | String   | FALSE    |
 
@@ -1862,6 +1863,7 @@ Filter                 | Description
 `status eq "INACTIVE"` | Apps that have a `status` of `INACTIVE`
 `user.id eq ":uid"`    | Apps assigned to a specific user such as `00ucw2RPGIUNTDQOYPOF`
 `group.id eq ":gid"`   | Apps assigned to a specific group such as `00gckgEHZXOUDGDJLYLG`
+`credentials.signing.kid eq ":kid"`   | Apps using a particular key such as `SIMcCQNY3uwXoW3y0vf6VxiBb5n9pf8L2fK8d-FIbm4`
 
 > Only a single expression is supported as this time
 
@@ -2372,6 +2374,129 @@ curl -v -X GET \
       },
       "deactivate": {
         "href": "https://example.okta.com/api/v1/apps/0oabkvBLDEKCNXBGYUAS/lifecycle/deactivate"
+      }
+    }
+  }
+]
+~~~
+
+#### List Applications Using a key
+{:.api .api-operation}
+
+Enumerates all applications using a key.
+
+##### Request Example
+{:.api .api-request .api-request-example}
+
+~~~sh
+curl -v -X GET \
+-H "Accept: application/json" \
+-H "Content-Type: application/json" \
+-H "Authorization: SSWS ${api_token}" \
+"https://${org}.okta.com/api/v1/apps?filter=credentials.signing.kid+eq+\"SIMcCQNY3uwXoW3y0vf6VxiBb5n9pf8L2fK8d-FIbm4\""
+~~~
+
+
+##### Response Example
+{:.api .api-response .api-response-example}
+
+~~~json
+[
+  {
+    "id": "0oa1gjh63g214q0Hq0g4",
+    "name": "testorgone_customsaml20app_1",
+    "label": "Custom Saml 2.0 App",
+    "status": "ACTIVE",
+    "lastUpdated": "2016-08-09T20:12:19.000Z",
+    "created": "2016-08-09T20:12:19.000Z",
+    "accessibility": {
+      "selfService": false,
+      "errorRedirectUrl": null,
+      "loginRedirectUrl": null
+    },
+    "visibility": {
+      "autoSubmitToolbar": false,
+      "hide": {
+        "iOS": false,
+        "web": false
+      },
+      "appLinks": {
+        "testorgone_customsaml20app_1_link": true
+      }
+    },
+    "features": [],
+    "signOnMode": "SAML_2_0",
+    "credentials": {
+      "userNameTemplate": {
+        "template": "${fn:substringBefore(source.login, \"@\")}",
+        "type": "BUILT_IN"
+      },
+       "signing": {
+      "kid": "SIMcCQNY3uwXoW3y0vf6VxiBb5n9pf8L2fK8d-FIbm4"
+      }
+    },
+    "settings": {
+      "app": {},
+      "notifications": {
+        "vpn": {
+          "network": {
+            "connection": "DISABLED"
+          },
+          "message": null,
+          "helpUrl": null
+        }
+      },
+      "signOn": {
+        "defaultRelayState": "",
+        "ssoAcsUrl": "http://example.okta.com",
+        "idpIssuer": "http://www.okta.com/${org.externalKey}",
+        "audience": "https://example.com/tenant/123",
+        "recipient": "http://recipient.okta.com",
+        "destination": "http://destination.okta.com",
+        "subjectNameIdTemplate": "${user.userName}",
+        "subjectNameIdFormat": "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress",
+        "responseSigned": true,
+        "assertionSigned": true,
+        "signatureAlgorithm": "RSA_SHA256",
+        "digestAlgorithm": "SHA256",
+        "honorForceAuthn": true,
+        "authnContextClassRef": "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport",
+        "spIssuer": null,
+        "requestCompressed": false,
+        "attributeStatements": []
+      }
+    },
+    "_links": {
+      "logo": [
+        {
+          "name": "medium",
+          "href": "http://testorgone.okta.com/assets/img/logos/default.6770228fb0dab49a1695ef440a5279bb.png",
+          "type": "image/png"
+        }
+      ],
+      "appLinks": [
+        {
+          "name": "testorgone_customsaml20app_1_link",
+          "href": "http://testorgone.okta.com/home/testorgone_customsaml20app_1/0oa1gjh63g214q0Hq0g4/aln1gofChJaerOVfY0g4",
+          "type": "text/html"
+        }
+      ],
+      "help": {
+        "href": "http://testorgone-admin.okta.com/app/testorgone_customsaml20app_1/0oa1gjh63g214q0Hq0g4/setup/help/SAML_2_0/instructions",
+        "type": "text/html"
+      },
+      "users": {
+        "href": "http://testorgone.okta.com/api/v1/apps/0oa1gjh63g214q0Hq0g4/users"
+      },
+      "deactivate": {
+        "href": "http://testorgone.okta.com/api/v1/apps/0oa1gjh63g214q0Hq0g4/lifecycle/deactivate"
+      },
+      "groups": {
+        "href": "http://testorgone.okta.com/api/v1/apps/0oa1gjh63g214q0Hq0g4/groups"
+      },
+      "metadata": {
+        "href": "http://testorgone.okta.com:/api/v1/apps/0oa1gjh63g214q0Hq0g4/sso/saml/metadata",
+        "type": "application/xml"
       }
     }
   }
